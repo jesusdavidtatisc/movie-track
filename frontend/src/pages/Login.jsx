@@ -72,10 +72,9 @@ function Login({ setUser }) {
 
         <div className="auth-container">
 
-            <h1>
-                🎬 MovieTrack
-            </h1>
-
+            <h1 className="auth-title">
+                    🎬 MovieTrack
+                    </h1>
             <form onSubmit={handleSubmit}>
 
                 {

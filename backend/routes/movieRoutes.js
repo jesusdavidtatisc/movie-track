@@ -1,5 +1,8 @@
 const router = require("express").Router();
 
+const upload =
+require("../config/multer");
+
 const {
 
     createMovie,
@@ -10,7 +13,11 @@ const {
 
 } = require("../controllers/movieController");
 
-router.post("/", createMovie);
+router.post(
+    "/",
+    upload.single("imagen"),
+    createMovie
+);
 
 router.get("/", getMovies);
 

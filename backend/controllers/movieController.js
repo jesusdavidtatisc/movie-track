@@ -4,8 +4,30 @@ exports.createMovie = async (req, res) => {
 
     try {
 
-        const movie =
-        new Movie(req.body);
+        const {
+
+            nombre,
+            genero,
+            anio,
+            calificacion,
+            creadoPor
+
+        } = req.body;
+
+        const movie = new Movie({
+
+            nombre,
+            genero,
+            anio,
+            calificacion,
+            creadoPor,
+
+            imagen:
+            req.file
+            ? `http://localhost:5000/uploads/${req.file.filename}`
+            : ""
+
+        });
 
         await movie.save();
 
