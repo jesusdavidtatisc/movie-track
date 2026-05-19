@@ -19,7 +19,19 @@ const movieSchema = new mongoose.Schema({
 
     calificacion: {
         type: Number,
+        required: true,
+        min: 1,
+        max: 10
+    },
+
+    imagen: {
+        type: String,
         required: true
+    },
+
+    creadoPor: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
     }
 
 }, {

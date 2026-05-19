@@ -4,12 +4,14 @@ const reviewSchema = new mongoose.Schema({
 
     movieId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Movie"
+        ref: "Movie",
+        required: true
     },
 
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: "User",
+        required: true
     },
 
     comentario: {

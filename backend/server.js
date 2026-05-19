@@ -13,6 +13,8 @@ mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("MongoDB conectado"))
 .catch((error) => console.log(error));
 
+app.use("/api/auth", require("./routes/authRoutes"));
+
 app.use("/api/movies", require("./routes/movieRoutes"));
 
 app.get("/", (req, res) => {
