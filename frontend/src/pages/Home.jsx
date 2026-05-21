@@ -429,14 +429,14 @@ function Home() {
                         >
 
                             <img
-
-                                src={movie.imagen}
-
-                                alt={movie.nombre}
-
-                                className="movie-image"
-
-                            />
+  src={movie.imagen}
+  alt={movie.nombre}
+  onError={(e) => {
+    e.target.src =
+      "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg";
+  }}
+  className="w-full h-72 object-cover rounded-xl"
+/>
 
                             <h2>
                                 {movie.nombre}
