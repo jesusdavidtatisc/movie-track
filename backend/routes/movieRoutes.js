@@ -1,30 +1,45 @@
-const router = require("express").Router();
+const express =
+require("express");
 
-const upload =
-require("../config/multer");
+const router =
+express.Router();
 
 const {
 
-    createMovie,
     getMovies,
+    addMovie,
     searchMovies,
-    filterByGenre,
-    topMovies
+    filterMovies,
+    getMovieById
 
-} = require("../controllers/movieController");
+} = require(
+    "../controllers/movieController"
+);
+
+router.get(
+    "/search",
+    searchMovies
+);
+
+router.get(
+    "/filter",
+    filterMovies
+);
+
+router.get(
+    "/:id",
+    getMovieById
+);
+
+router.get(
+    "/",
+    getMovies
+);
 
 router.post(
     "/",
-    upload.single("imagen"),
-    createMovie
+    addMovie
 );
 
-router.get("/", getMovies);
-
-router.get("/search", searchMovies);
-
-router.get("/genre/:genre", filterByGenre);
-
-router.get("/top", topMovies);
-
-module.exports = router;
+module.exports =
+router;

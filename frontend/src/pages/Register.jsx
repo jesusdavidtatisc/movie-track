@@ -13,7 +13,7 @@ import {
 
 import API from "../services/api";
 
-function Login({ setUser }) {
+function Register() {
 
     const navigate =
     useNavigate();
@@ -21,6 +21,7 @@ function Login({ setUser }) {
     const [form, setForm] =
     useState({
 
+        username: "",
         email: "",
         password: ""
 
@@ -38,39 +39,30 @@ function Login({ setUser }) {
         });
     };
 
-    const login = async () => {
+    const register = async () => {
 
         try {
 
-            const res =
             await API.post(
 
-                "/auth/login",
+                "/auth/register",
 
                 form
 
             );
 
-            localStorage.setItem(
-
-                "user",
-
-                JSON.stringify(
-                    res.data
-                )
-
+            alert(
+                "Usuario creado"
             );
 
-            setUser(res.data);
-
-            navigate("/");
+            navigate("/login");
 
         } catch (error) {
 
             console.log(error);
 
             alert(
-                "Credenciales incorrectas"
+                "Error al registrar"
             );
         }
     };
@@ -84,8 +76,23 @@ function Login({ setUser }) {
                 <div className="movie-content">
 
                     <h1>
-                        Iniciar sesión
+                        Registro
                     </h1>
+
+                    <input
+
+                        type="text"
+
+                        name="username"
+
+                        placeholder="Usuario"
+
+                        onChange={handleChange}
+
+                    />
+
+                    <br />
+                    <br />
 
                     <input
 
@@ -118,19 +125,19 @@ function Login({ setUser }) {
                     <br />
 
                     <button
-                        onClick={login}
+                        onClick={register}
                     >
 
-                        Entrar
+                        Registrarse
 
                     </button>
 
                     <br />
                     <br />
 
-                    <Link to="/register">
+                    <Link to="/login">
 
-                        Crear cuenta
+                        Ya tengo cuenta
 
                     </Link>
 
@@ -142,4 +149,4 @@ function Login({ setUser }) {
     );
 }
 
-export default Login;
+export default Register;

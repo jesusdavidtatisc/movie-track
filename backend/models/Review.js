@@ -3,34 +3,47 @@ const mongoose = require("mongoose");
 const reviewSchema = new mongoose.Schema({
 
     movieId: {
+
         type: mongoose.Schema.Types.ObjectId,
         ref: "Movie",
         required: true
     },
 
     userId: {
+
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
     },
 
     comentario: {
+
         type: String,
         required: true
     },
 
-    likes: {
-        type: Number,
-        default: 0
-    },
+    likes: [{
 
-    dislikes: {
-        type: Number,
-        default: 0
-    }
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+
+    }],
+
+    dislikes: [{
+
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+
+    }]
 
 }, {
+
     timestamps: true
+
 });
 
-module.exports = mongoose.model("Review", reviewSchema);
+module.exports =
+mongoose.model(
+    "Review",
+    reviewSchema
+);

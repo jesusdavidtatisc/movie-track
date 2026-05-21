@@ -1,51 +1,48 @@
 import { useEffect, useState } from "react";
 
-import API from "../services/api";
+import axios from "axios";
 
-function Home({ user, setUser }) {
+import Navbar from "../components/Navbar";
+
+import { Link } from "react-router-dom";
+
+function Home() {
 
     const [movies, setMovies] =
     useState([]);
 
+    const [showForm, setShowForm] =
+    useState(false);
+
     const [search, setSearch] =
     useState("");
 
-    const [form, setForm] =
-    useState({
-
-        nombre: "",
-        genero: "",
-        anio: "",
-        calificacion: "",
-        imagen: null
-
-    });
-
-    const [reviewText, setReviewText] =
+    const [genero, setGenero] =
     useState("");
 
-    const [reviews, setReviews] =
-    useState({});
+    const [anio, setAnio] =
+    useState("");
 
-    const getMovies = async () => {
+    const [rating, setRating] =
+    useState("");
 
-        try {
+    const [nombre, setNombre] =
+    useState("");
 
-            const res =
-            await API.get("/movies");
+    const [nuevoGenero, setNuevoGenero] =
+    useState("");
 
-            setMovies(res.data);
+    const [nuevoAnio, setNuevoAnio] =
+    useState("");
 
-            res.data.forEach(movie => {
+    const [calificacion, setCalificacion] =
+    useState("");
 
-                getReviews(movie._id);
-            });
+    const [imagen, setImagen] =
+    useState("");
 
-        } catch (error) {
-
-            console.log(error);
-        }
-    };
+    const token =
+    localStorage.getItem("token");
 
     useEffect(() => {
 
@@ -53,77 +50,14 @@ function Home({ user, setUser }) {
 
     }, []);
 
-    const handleChange = (e) => {
-
-        setForm({
-
-            ...form,
-            [e.target.name]: e.target.value
-
-        });
-    };
-
-    const handleSubmit = async (e) => {
-
-        e.preventDefault();
-
-        try {
-
-            const formData =
-            new FormData();
-
-            formData.append(
-                "nombre",
-                form.nombre
-            );
-
-            formData.append(
-                "genero",
-                form.genero
-            );
-
-            formData.append(
-                "anio",
-                form.anio
-            );
-
-            formData.append(
-                "calificacion",
-                form.calificacion
-            );
-
-            formData.append(
-                "creadoPor",
-                user._id
-            );
-
-            formData.append(
-                "imagen",
-                form.imagen
-            );
-
-            await API.post(
-                "/movies",
-                formData
-            );
-
-            getMovies();
-
-        } catch (error) {
-
-            console.log(error);
-
-            alert("Error");
-        }
-    };
-
-    const searchMovies = async () => {
+    const getMovies =
+    async () => {
 
         try {
 
             const res =
-            await API.get(
-                `/movies/search?q=${search}`
+            await axios.get(
+                "http://localhost:5000/api/movies"
             );
 
             setMovies(res.data);
@@ -134,21 +68,17 @@ function Home({ user, setUser }) {
         }
     };
 
-    const getReviews = async (movieId) => {
+    const searchMovies =
+    async () => {
 
         try {
 
             const res =
-            await API.get(
-                `/reviews/${movieId}`
+            await axios.get(
+                `http://localhost:5000/api/movies/search?q=${search}`
             );
 
-            setReviews(prev => ({
-
-                ...prev,
-                [movieId]: res.data
-
-            }));
+            setMovies(res.data);
 
         } catch (error) {
 
@@ -156,21 +86,17 @@ function Home({ user, setUser }) {
         }
     };
 
-    const submitReview = async (movieId) => {
+    const filterMovies =
+    async () => {
 
         try {
 
-            await API.post("/reviews", {
+            const res =
+            await axios.get(
+                `http://localhost:5000/api/movies/filter?genero=${genero}&anio=${anio}&rating=${rating}`
+            );
 
-                movieId,
-                userId: user._id,
-                comentario: reviewText
-
-            });
-
-            setReviewText("");
-
-            getReviews(movieId);
+            setMovies(res.data);
 
         } catch (error) {
 
@@ -178,253 +104,370 @@ function Home({ user, setUser }) {
         }
     };
 
-    const likeReview = async (id, movieId) => {
+    const addMovie =
+    async (e) => {
 
-        await API.put(
-            `/reviews/like/${id}`
-        );
+        e.preventDefault();
 
-        getReviews(movieId);
+        try {
+
+            await axios.post(
+
+                "http://localhost:5000/api/movies",
+
+                {
+
+                    nombre,
+                    genero: nuevoGenero,
+                    anio: Number(nuevoAnio),
+                    calificacion:
+                    Number(calificacion),
+                    imagen
+
+                },
+
+                {
+
+                    headers: {
+
+                        Authorization:
+                        `Bearer ${token}`
+
+                    }
+
+                }
+
+            );
+
+            alert(
+                "Película agregada"
+            );
+
+            setNombre("");
+            setNuevoGenero("");
+            setNuevoAnio("");
+            setCalificacion("");
+            setImagen("");
+
+            setShowForm(false);
+
+            getMovies();
+
+        } catch (error) {
+
+            console.log(error);
+
+            alert(
+                "Error agregando película"
+            );
+        }
     };
 
-    const dislikeReview = async (id, movieId) => {
+    const logout =
+    () => {
 
-        await API.put(
-            `/reviews/dislike/${id}`
+        localStorage.removeItem(
+            "token"
         );
 
-        getReviews(movieId);
-    };
-
-    const logout = () => {
-
-        localStorage.clear();
-
-        setUser(null);
+        window.location.href =
+        "/login";
     };
 
     return (
 
-        <div className="container">
+        <div>
 
-            <div className="topbar">
+            <Navbar
 
-                <h1 className="logo">
-                    🎬 MovieTrack
-                </h1>
+                search={search}
+                setSearch={setSearch}
+                searchMovies={searchMovies}
 
-                <button onClick={logout}>
-                    Logout
-                </button>
+                genero={genero}
+                setGenero={setGenero}
 
-            </div>
+                anio={anio}
+                setAnio={setAnio}
 
-            <div className="search-section">
+                rating={rating}
+                setRating={setRating}
 
-                <input
-                    type="text"
-                    placeholder="Buscar película"
-                    onChange={(e) =>
-                        setSearch(e.target.value)
-                    }
-                />
+                filterMovies={filterMovies}
 
-                <button onClick={searchMovies}>
-                    Buscar
-                </button>
+                logout={logout}
 
-            </div>
+            />
 
-            <form
-                className="movie-form"
-                onSubmit={handleSubmit}
+            <div
+                style={{
+                    padding:"20px"
+                }}
             >
 
-                <h2>
-                    Agregar película
-                </h2>
+                <button
 
-                <input
-                    type="text"
-                    name="nombre"
-                    placeholder="Nombre"
-                    onChange={handleChange}
-                />
+                    onClick={() =>
 
-                <input
-                    type="text"
-                    name="genero"
-                    placeholder="Genero"
-                    onChange={handleChange}
-                />
-
-                <input
-                    type="number"
-                    name="anio"
-                    placeholder="Año"
-                    onChange={handleChange}
-                />
-
-                <input
-                    type="number"
-                    min="1"
-                    max="10"
-                    name="calificacion"
-                    placeholder="Calificación"
-                    onChange={handleChange}
-                />
-
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) =>
-
-                        setForm({
-
-                            ...form,
-                            imagen:
-                            e.target.files[0]
-
-                        })
+                        setShowForm(
+                            !showForm
+                        )
 
                     }
-                />
 
-                <button type="submit">
-                    Publicar película
+                    style={{
+
+                        padding:"12px 20px",
+
+                        background:"#e50914",
+
+                        color:"white",
+
+                        border:"none",
+
+                        borderRadius:"8px",
+
+                        cursor:"pointer",
+
+                        fontWeight:"bold"
+
+                    }}
+
+                >
+
+                    {
+
+                        showForm
+
+                        ?
+
+                        "Cerrar Formulario"
+
+                        :
+
+                        "Agregar Película"
+
+                    }
+
                 </button>
 
-            </form>
+            </div>
+
+            {
+
+                showForm && (
+
+                    <div
+                        className="add-movie-container"
+                    >
+
+                        <h2>
+                            Nueva Película
+                        </h2>
+
+                        <form
+                            onSubmit={addMovie}
+                        >
+
+                            <input
+
+                                type="text"
+
+                                placeholder="Nombre"
+
+                                value={nombre}
+
+                                onChange={(e) =>
+
+                                    setNombre(
+                                        e.target.value
+                                    )
+
+                                }
+
+                                required
+
+                            />
+
+                            <select
+
+                                value={nuevoGenero}
+
+                                onChange={(e) =>
+
+                                    setNuevoGenero(
+                                        e.target.value
+                                    )
+
+                                }
+
+                                required
+
+                            >
+
+                                <option value="">
+                                    Género
+                                </option>
+
+                                <option value="Action">
+                                    Action
+                                </option>
+
+                                <option value="Drama">
+                                    Drama
+                                </option>
+
+                                <option value="Sci-Fi">
+                                    Sci-Fi
+                                </option>
+
+                                <option value="Comedy">
+                                    Comedy
+                                </option>
+
+                                <option value="Horror">
+                                    Horror
+                                </option>
+
+                                <option value="Animation">
+                                    Animation
+                                </option>
+
+                            </select>
+
+                            <input
+
+                                type="number"
+
+                                placeholder="Año"
+
+                                value={nuevoAnio}
+
+                                onChange={(e) =>
+
+                                    setNuevoAnio(
+                                        e.target.value
+                                    )
+
+                                }
+
+                                required
+
+                            />
+
+                            <input
+
+                                type="number"
+
+                                min="1"
+
+                                max="10"
+
+                                placeholder="Calificación"
+
+                                value={calificacion}
+
+                                onChange={(e) =>
+
+                                    setCalificacion(
+                                        e.target.value
+                                    )
+
+                                }
+
+                                required
+
+                            />
+
+                            <input
+
+                                type="text"
+
+                                placeholder="URL imagen"
+
+                                value={imagen}
+
+                                onChange={(e) =>
+
+                                    setImagen(
+                                        e.target.value
+                                    )
+
+                                }
+
+                                required
+
+                            />
+
+                            <button
+                                type="submit"
+                            >
+
+                                Guardar Película
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                )
+            }
 
             <div className="movies-grid">
 
                 {
-                    movies.map((movie) => (
+
+                    movies.map(movie => (
 
                         <div
+
                             key={movie._id}
+
                             className="movie-card"
+
                         >
 
                             <img
+
                                 src={movie.imagen}
-                                alt=""
+
+                                alt={movie.nombre}
+
                                 className="movie-image"
+
                             />
 
-                            <div className="movie-content">
+                            <h2>
+                                {movie.nombre}
+                            </h2>
 
-                                <h2 className="movie-title">
-                                    {movie.nombre}
-                                </h2>
+                            <p>
+                                🎭 {movie.genero}
+                            </p>
 
-                                <p className="movie-info">
-                                    {movie.genero}
-                                </p>
+                            <p>
+                                📅 {movie.anio}
+                            </p>
 
-                                <p className="movie-info">
-                                    {movie.anio}
-                                </p>
+                            <p>
+                                ⭐ {movie.calificacion}/10
+                            </p>
 
-                                <p className="rating">
-                                    ⭐ {movie.calificacion}/10
-                                </p>
+                            <Link
+                                to={`/movie/${movie._id}`}
+                            >
 
-                                <div className="review-section">
+                                <button>
 
-                                    <h3>
-                                        Reviews
-                                    </h3>
+                                    Reseñas
 
-                                    <textarea
+                                </button>
 
-                                        placeholder="Escribe tu opinión"
-
-                                        onChange={(e) =>
-
-                                            setReviewText(
-                                                e.target.value
-                                            )
-
-                                        }
-
-                                    />
-
-                                    <button
-                                        onClick={() =>
-                                            submitReview(movie._id)
-                                        }
-                                    >
-
-                                        Publicar review
-
-                                    </button>
-
-                                    {
-                                        reviews[movie._id]?.map(review => (
-
-                                            <div
-                                                key={review._id}
-                                                className="review-card"
-                                            >
-
-                                                <p className="review-user">
-
-                                                    {
-                                                        review.userId?.username
-                                                    }
-
-                                                </p>
-
-                                                <p>
-                                                    {review.comentario}
-                                                </p>
-
-                                                <div
-                                                    className="review-buttons"
-                                                >
-
-                                                    <button
-                                                        onClick={() =>
-
-                                                            likeReview(
-                                                                review._id,
-                                                                movie._id
-                                                            )
-
-                                                        }
-                                                    >
-
-                                                        👍 {review.likes}
-
-                                                    </button>
-
-                                                    <button
-                                                        onClick={() =>
-
-                                                            dislikeReview(
-                                                                review._id,
-                                                                movie._id
-                                                            )
-
-                                                        }
-                                                    >
-
-                                                        👎 {review.dislikes}
-
-                                                    </button>
-
-                                                </div>
-
-                                            </div>
-                                        ))
-                                    }
-
-                                </div>
-
-                            </div>
+                            </Link>
 
                         </div>
+
                     ))
                 }
 

@@ -1,33 +1,36 @@
-const Movie = require("../models/Movie");
+const Movie =
+require("../models/Movie");
 
-exports.createMovie = async (req, res) => {
+exports.getMovies =
+async (req, res) => {
 
     try {
 
-        const {
+        const movies =
+        await Movie.find();
 
-            nombre,
-            genero,
-            anio,
-            calificacion,
-            creadoPor
+        res.json(movies);
 
-        } = req.body;
+    } catch (error) {
 
-        const movie = new Movie({
+        console.log(error);
 
-            nombre,
-            genero,
-            anio,
-            calificacion,
-            creadoPor,
+        res.status(500).json({
 
-            imagen:
-            req.file
-            ? `http://localhost:5000/uploads/${req.file.filename}`
-            : ""
+            message:
+            "Error obteniendo películas"
 
         });
+    }
+};
+
+exports.addMovie =
+async (req, res) => {
+
+    try {
+
+        const movie =
+        new Movie(req.body);
 
         await movie.save();
 
@@ -37,39 +40,29 @@ exports.createMovie = async (req, res) => {
 
         console.log(error);
 
-        res.status(500).json(error);
+        res.status(500).json({
+
+            message:
+            "Error agregando película"
+
+        });
     }
 };
 
-exports.getMovies = async (req, res) => {
+exports.searchMovies =
+async (req, res) => {
 
     try {
 
         const movies =
-        await Movie.find()
-        .sort({ createdAt: -1 });
-
-        res.json(movies);
-
-    } catch (error) {
-
-        console.log(error);
-
-        res.status(500).json(error);
-    }
-};
-
-exports.searchMovies = async (req, res) => {
-
-    try {
-
-        const query = req.query.q;
-
-        const movies = await Movie.find({
+        await Movie.find({
 
             nombre: {
-                $regex: query,
+
+                $regex: req.query.q,
+
                 $options: "i"
+
             }
 
         });
@@ -80,39 +73,49 @@ exports.searchMovies = async (req, res) => {
 
         console.log(error);
 
-        res.status(500).json(error);
-    }
-};
+        res.status(500).json({
 
-exports.filterByGenre = async (req, res) => {
+            message:
+            "Error buscando películas"
 
-    try {
-
-        const genre = req.params.genre;
-
-        const movies =
-        await Movie.find({
-            genero: genre
         });
-
-        res.json(movies);
-
-    } catch (error) {
-
-        console.log(error);
-
-        res.status(500).json(error);
     }
 };
 
-exports.topMovies = async (req, res) => {
+exports.filterMovies =
+async (req, res) => {
 
     try {
 
+        const {
+
+            genero,
+            anio,
+            rating
+
+        } = req.query;
+
+        let filters = {};
+
+        if (genero) {
+
+            filters.genero = genero;
+        }
+
+        if (anio) {
+
+            filters.anio =
+            Number(anio);
+        }
+
+        if (rating) {
+
+            filters.calificacion =
+            Number(rating);
+        }
+
         const movies =
-        await Movie.find()
-        .sort({ calificacion: -1 })
-        .limit(5);
+        await Movie.find(filters);
 
         res.json(movies);
 
@@ -120,6 +123,36 @@ exports.topMovies = async (req, res) => {
 
         console.log(error);
 
-        res.status(500).json(error);
+        res.status(500).json({
+
+            message:
+            "Error filtrando películas"
+
+        });
+    }
+};
+
+exports.getMovieById =
+async (req, res) => {
+
+    try {
+
+        const movie =
+        await Movie.findById(
+            req.params.id
+        );
+
+        res.json(movie);
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+
+            message:
+            "Error obteniendo película"
+
+        });
     }
 };
