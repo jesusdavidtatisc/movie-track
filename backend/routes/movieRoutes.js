@@ -7,13 +7,24 @@ express.Router();
 const {
 
     getMovies,
+
+    getMovieById,
+
     addMovie,
+
+    deleteMovie,
+
     searchMovies,
-    filterMovies,
-    getMovieById
+
+    filterMovies
 
 } = require(
     "../controllers/movieController"
+);
+
+router.get(
+    "/",
+    getMovies
 );
 
 router.get(
@@ -31,14 +42,14 @@ router.get(
     getMovieById
 );
 
-router.get(
-    "/",
-    getMovies
-);
-
 router.post(
     "/",
     addMovie
+);
+
+router.delete(
+    "/:id",
+    deleteMovie
 );
 
 module.exports =

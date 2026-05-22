@@ -4,24 +4,82 @@ require("express");
 const router =
 express.Router();
 
-const {
+const Review =
+require("../models/Review");
 
-    createReview,
+router.get(
 
-    getMovieReviews
+    "/:movieId",
 
-} = require(
-    "../controllers/reviewController"
+    async (req, res) => {
+
+        try {
+
+            const reviews =
+
+            await Review.find({
+
+                movieId:
+                req.params.movieId
+
+            })
+
+            .populate(
+                "userId",
+                "nombre"
+            )
+
+            .sort({
+                createdAt:-1
+            });
+
+            res.json(reviews);
+
+        } catch (error) {
+
+            res.status(500).json({
+                message:error.message
+            });
+        }
+    }
 );
 
 router.post(
-    "/",
-    createReview
-);
 
-router.get(
-    "/movie/:id",
-    getMovieReviews
+    "/",
+
+    async (req, res) => {
+
+        try {
+
+            const review =
+            new Review({
+
+                movieId:
+                req.body.movieId,
+
+                comentario:
+                req.body.comentario,
+
+                userId:null
+
+            });
+
+            await review.save();
+
+            res.status(201).json(
+                review
+            );
+
+        } catch (error) {
+
+            console.log(error);
+
+            res.status(500).json({
+                message:error.message
+            });
+        }
+    }
 );
 
 module.exports =

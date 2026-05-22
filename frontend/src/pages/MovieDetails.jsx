@@ -53,7 +53,7 @@ function MovieDetails() {
 
             const res =
             await axios.get(
-                `http://localhost:5000/api/reviews/movie/${id}`
+                `http://localhost:5000/api/reviews/${id}`
             );
 
             setReviews(res.data);
@@ -72,14 +72,17 @@ function MovieDetails() {
         try {
 
             await axios.post(
+
                 "http://localhost:5000/api/reviews",
+
                 {
 
-                    movieId: id,
+                    movieId:id,
 
                     comentario
 
                 }
+
             );
 
             setComentario("");
@@ -89,23 +92,49 @@ function MovieDetails() {
         } catch (error) {
 
             console.log(error);
-
-            alert(
-                "Error creando reseña"
-            );
         }
     };
 
     if (!movie) {
 
-        return <h1>Cargando...</h1>;
+        return <h2>Cargando...</h2>;
     }
 
     return (
 
         <div>
 
-            <Navbar />
+            <Navbar
+
+                search=""
+                setSearch={() => {}}
+
+                searchMovies={() => {}}
+
+                genero=""
+                setGenero={() => {}}
+
+                anio=""
+                setAnio={() => {}}
+
+                rating=""
+                setRating={() => {}}
+
+                filterMovies={() => {}}
+
+                logout={() => {
+
+                    localStorage.removeItem(
+                        "token"
+                    );
+
+                    window.location.href =
+                    "/login";
+                }}
+
+                movies={[]}
+
+            />
 
             <div
                 style={{
@@ -118,9 +147,8 @@ function MovieDetails() {
                     style={{
                         display:"flex",
                         gap:"30px",
-                        alignItems:"flex-start",
                         marginBottom:"40px",
-                        flexWrap:"wrap"
+                        alignItems:"flex-start"
                     }}
                 >
 
@@ -130,22 +158,22 @@ function MovieDetails() {
 
                         alt={movie.nombre}
 
+                        onError={(e) => {
+
+                            e.target.src =
+                            "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg";
+                        }}
+
                         style={{
 
                             width:"250px",
 
-                            height:"370px",
+                            height:"360px",
 
                             objectFit:"cover",
 
                             borderRadius:"12px"
 
-                        }}
-
-                        onError={(e) => {
-
-                            e.target.src =
-                            "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg";
                         }}
 
                     />
@@ -175,13 +203,13 @@ function MovieDetails() {
                 <form
                     onSubmit={createReview}
                     style={{
-                        marginBottom:"30px"
+                        marginBottom:"40px"
                     }}
                 >
 
                     <textarea
 
-                        placeholder="Escribe tu reseña..."
+                        placeholder="Escribe una reseña..."
 
                         value={comentario}
 
@@ -207,8 +235,6 @@ function MovieDetails() {
 
                             border:"none",
 
-                            resize:"none",
-
                             marginBottom:"15px"
 
                         }}
@@ -221,25 +247,23 @@ function MovieDetails() {
 
                         style={{
 
-                            padding:"12px 20px",
-
                             background:"#e50914",
 
                             color:"white",
 
                             border:"none",
 
+                            padding:"12px 20px",
+
                             borderRadius:"8px",
 
-                            cursor:"pointer",
-
-                            fontWeight:"bold"
+                            cursor:"pointer"
 
                         }}
 
                     >
 
-                        Publicar reseña
+                        Publicar Reseña
 
                     </button>
 
@@ -269,13 +293,13 @@ function MovieDetails() {
 
                             style={{
 
-                                background:"#1f1f1f",
+                                background:"#1e1e1e",
 
                                 padding:"20px",
 
                                 borderRadius:"10px",
 
-                                marginBottom:"15px"
+                                marginBottom:"20px"
 
                             }}
 
@@ -285,7 +309,7 @@ function MovieDetails() {
 
                                 {
 
-                                    review.userId?.name
+                                    review.userId?.nombre
 
                                     ||
 

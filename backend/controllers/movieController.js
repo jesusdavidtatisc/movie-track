@@ -1,7 +1,7 @@
 const Movie =
 require("../models/Movie");
 
-exports.getMovies =
+const getMovies =
 async (req, res) => {
 
     try {
@@ -13,126 +13,16 @@ async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
-
         res.status(500).json({
 
             message:
-            "Error obteniendo películas"
+            error.message
 
         });
     }
 };
 
-exports.addMovie =
-async (req, res) => {
-
-    try {
-
-        const movie =
-        new Movie(req.body);
-
-        await movie.save();
-
-        res.json(movie);
-
-    } catch (error) {
-
-        console.log(error);
-
-        res.status(500).json({
-
-            message:
-            "Error agregando película"
-
-        });
-    }
-};
-
-exports.searchMovies =
-async (req, res) => {
-
-    try {
-
-        const movies =
-        await Movie.find({
-
-            nombre: {
-
-                $regex: req.query.q,
-
-                $options: "i"
-
-            }
-
-        });
-
-        res.json(movies);
-
-    } catch (error) {
-
-        console.log(error);
-
-        res.status(500).json({
-
-            message:
-            "Error buscando películas"
-
-        });
-    }
-};
-
-exports.filterMovies =
-async (req, res) => {
-
-    try {
-
-        const {
-
-            genero,
-            anio,
-            rating
-
-        } = req.query;
-
-        let filters = {};
-
-        if (genero) {
-
-            filters.genero = genero;
-        }
-
-        if (anio) {
-
-            filters.anio =
-            Number(anio);
-        }
-
-        if (rating) {
-
-            filters.calificacion =
-            Number(rating);
-        }
-
-        const movies =
-        await Movie.find(filters);
-
-        res.json(movies);
-
-    } catch (error) {
-
-        console.log(error);
-
-        res.status(500).json({
-
-            message:
-            "Error filtrando películas"
-
-        });
-    }
-};
-
-exports.getMovieById =
+const getMovieById =
 async (req, res) => {
 
     try {
@@ -146,13 +36,195 @@ async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        res.status(500).json({
+
+            message:
+            error.message
+
+        });
+    }
+};
+
+const addMovie =
+async (req, res) => {
+
+    try {
+
+        const movie =
+        await Movie.create({
+
+            ...req.body,
+
+            creadaPorUsuario: true
+
+        });
+
+        res.status(201).json(
+            movie
+        );
+
+    } catch (error) {
 
         res.status(500).json({
 
             message:
-            "Error obteniendo película"
+            error.message
 
         });
     }
+};
+
+const deleteMovie =
+async (req, res) => {
+
+    try {
+
+        const movie =
+        await Movie.findById(
+            req.params.id
+        );
+
+        if (!movie) {
+
+            return res.status(404).json({
+
+                message:
+                "Película no encontrada"
+
+            });
+        }
+
+        if (
+            !movie.creadaPorUsuario
+        ) {
+
+            return res.status(403).json({
+
+                message:
+                "No puedes eliminar películas del sistema"
+
+            });
+        }
+
+        await Movie.findByIdAndDelete(
+            req.params.id
+        );
+
+        res.json({
+
+            message:
+            "Película eliminada"
+
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+
+            message:
+            error.message
+
+        });
+    }
+};
+
+const searchMovies =
+async (req, res) => {
+
+    try {
+
+        const movies =
+        await Movie.find({
+
+            nombre: {
+
+                $regex:
+                req.query.q,
+
+                $options: "i"
+
+            }
+
+        });
+
+        res.json(movies);
+
+    } catch (error) {
+
+        res.status(500).json({
+
+            message:
+            error.message
+
+        });
+    }
+};
+
+const filterMovies =
+async (req, res) => {
+
+    try {
+
+        const filtro = {};
+
+        if (req.query.genero) {
+
+            filtro.genero = {
+
+                $regex:
+                req.query.genero,
+
+                $options: "i"
+
+            };
+        }
+
+        if (req.query.anio) {
+
+            filtro.anio =
+            Number(
+                req.query.anio
+            );
+        }
+
+        if (req.query.rating) {
+
+            filtro.calificacion =
+            Number(
+                req.query.rating
+            );
+        }
+
+        const movies =
+        await Movie.find(
+            filtro
+        );
+
+        res.json(movies);
+
+    } catch (error) {
+
+        res.status(500).json({
+
+            message:
+            error.message
+
+        });
+    }
+};
+
+module.exports = {
+
+    getMovies,
+
+    getMovieById,
+
+    addMovie,
+
+    deleteMovie,
+
+    searchMovies,
+
+    filterMovies
+
 };

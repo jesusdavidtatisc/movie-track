@@ -1,53 +1,102 @@
-import {
-
-    Link,
-    useNavigate
-
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Navbar({
 
     search,
+
     setSearch,
+
     searchMovies,
 
     genero,
+
     setGenero,
 
     anio,
+
     setAnio,
 
     rating,
+
     setRating,
 
     filterMovies,
 
-    logout
+    logout,
+
+    movies
 
 }) {
 
-    const navigate =
-    useNavigate();
+    const years = [
+
+        ...new Set(
+
+            movies.map(
+                movie =>
+                movie.anio
+            )
+
+        )
+
+    ].sort((a, b) => a - b);
+
+    const ratings = [];
+
+    for (
+        let i = 1;
+        i <= 10;
+        i++
+    ) {
+
+        ratings.push(i);
+    }
+
+    const genres = [
+
+        ...new Set(
+
+            movies.map(
+                movie =>
+                movie.genero
+            )
+
+        )
+
+    ];
 
     return (
 
-        <div className="navbar">
+        <nav
+            className="navbar"
+        >
 
-            <div className="navbar-left">
+            <Link
+                to="/"
+                style={{
+                    textDecoration:"none"
+                }}
+            >
 
-                <h1 className="logo">
+                <h1
+                    className="logo"
+                >
+
                     🎬 MovieTrack
+
                 </h1>
 
-            </div>
+            </Link>
 
-            <div className="navbar-center">
+            <div
+                className="nav-center"
+            >
 
                 <input
 
                     type="text"
 
-                    placeholder="Buscar películas..."
+                    placeholder="Buscar película..."
 
                     value={search}
 
@@ -59,8 +108,6 @@ function Navbar({
 
                     }
 
-                    className="search-input"
-
                 />
 
                 <button
@@ -70,6 +117,12 @@ function Navbar({
                     Buscar
 
                 </button>
+
+            </div>
+
+            <div
+                className="filters"
+            >
 
                 <select
 
@@ -89,37 +142,22 @@ function Navbar({
                         Género
                     </option>
 
-                    <option value="Action">
-                        Acción
-                    </option>
+                    {
 
-                    <option value="Drama">
-                        Drama
-                    </option>
+                        genres.map(
+                            genre => (
 
-                    <option value="Sci-Fi">
-                        Ciencia ficción
-                    </option>
+                            <option
+                                key={genre}
+                                value={genre}
+                            >
 
-                    <option value="Comedy">
-                        Comedia
-                    </option>
+                                {genre}
 
-                    <option value="Horror">
-                        Terror
-                    </option>
+                            </option>
 
-                    <option value="Thriller">
-                        Thriller
-                    </option>
-
-                    <option value="Adventure">
-                        Aventura
-                    </option>
-
-                    <option value="Animation">
-                        Animación
-                    </option>
+                        ))
+                    }
 
                 </select>
 
@@ -143,17 +181,7 @@ function Navbar({
 
                     {
 
-                        Array.from(
-
-                            {
-
-                                length: 40
-
-                            },
-
-                            (_, i) => 2025 - i
-
-                        ).map(year => (
+                        years.map(year => (
 
                             <option
                                 key={year}
@@ -171,63 +199,39 @@ function Navbar({
 
                 <select
 
-    value={rating}
+                    value={rating}
 
-    onChange={(e) =>
+                    onChange={(e) =>
 
-        setRating(
-            e.target.value
-        )
+                        setRating(
+                            e.target.value
+                        )
 
-    }
+                    }
 
->
+                >
 
-    <option value="">
-        Rating mínimo
-    </option>
+                    <option value="">
+                        Rating
+                    </option>
 
-    <option value="1">
-        1
-    </option>
+                    {
 
-    <option value="2">
-        2
-    </option>
+                        ratings.map(rate => (
 
-    <option value="3">
-        3
-    </option>
+                            <option
+                                key={rate}
+                                value={rate}
+                            >
 
-    <option value="4">
-        4
-    </option>
+                                {rate}
 
-    <option value="5">
-        5
-    </option>
+                            </option>
 
-    <option value="6">
-        6
-    </option>
+                        ))
+                    }
 
-    <option value="7">
-        7
-    </option>
-
-    <option value="8">
-        8
-    </option>
-
-    <option value="9">
-        9
-    </option>
-
-    <option value="10">
-        10
-    </option>
-
-</select>
+                </select>
 
                 <button
                     onClick={filterMovies}
@@ -239,35 +243,16 @@ function Navbar({
 
             </div>
 
-            <div className="navbar-right">
+            <button
+                onClick={logout}
+                className="logout-btn"
+            >
 
-                <Link to="/dashboard">
+                Cerrar Sesión
 
-                    <button>
-                        Dashboard
-                    </button>
+            </button>
 
-                </Link>
-
-                <button
-
-                    onClick={() => {
-
-                        logout();
-
-                        navigate("/login");
-
-                    }}
-
-                >
-
-                    Logout
-
-                </button>
-
-            </div>
-
-        </div>
+        </nav>
     );
 }
 
