@@ -1,27 +1,90 @@
 const Review =
 require("../models/Review");
 
-exports.createReview =
+const User =
+require("../models/User");
+
+const mongoose =
+require("mongoose");
+
+const createReview =
 async (req, res) => {
 
     try {
 
+        const {
+
+            movieId,
+            comentario
+
+        } = req.body;
+
+        if (
+            !movieId ||
+            !comentario
+        ) {
+
+            return res.status(400).json({
+
+                message:
+                "Faltan datos"
+
+            });
+        }
+
+        const user =
+        await User.findOne();
+
+        if (!user) {
+
+            return res.status(400).json({
+
+                message:
+                "No hay usuarios registrados"
+
+            });
+        }
+
         const review =
-        new Review(req.body);
+        await Review.create({
 
-        await review.save();
+            movieId:
+            new mongoose.Types.ObjectId(
+                movieId
+            ),
 
-        res.json(review);
+            userId:
+            user._id,
+
+            comentario,
+
+            likes: [],
+
+            dislikes: []
+
+        });
+
+        res.status(201).json(
+            review
+        );
 
     } catch (error) {
 
-        console.log(error);
+        console.log(
+            "ERROR REVIEW:",
+            error
+        );
 
-        res.status(500).json(error);
+        res.status(500).json({
+
+            message:
+            error.message
+
+        });
     }
 };
 
-exports.getMovieReviews =
+const getMovieReviews =
 async (req, res) => {
 
     try {
@@ -30,64 +93,40 @@ async (req, res) => {
         await Review.find({
 
             movieId:
-            req.params.movieId
+            req.params.id
 
-        }).populate("userId");
+        })
 
-        res.json(reviews);
+        .populate(
+            "userId",
+            "name email"
+        )
+
+        .sort({
+            createdAt: -1
+        });
+
+        res.json(
+            reviews
+        );
 
     } catch (error) {
 
         console.log(error);
 
-        res.status(500).json(error);
+        res.status(500).json({
+
+            message:
+            error.message
+
+        });
     }
 };
 
-exports.likeReview =
-async (req, res) => {
+module.exports = {
 
-    try {
+    createReview,
 
-        const review =
-        await Review.findById(
-            req.params.id
-        );
+    getMovieReviews
 
-        review.likes += 1;
-
-        await review.save();
-
-        res.json(review);
-
-    } catch (error) {
-
-        console.log(error);
-
-        res.status(500).json(error);
-    }
-};
-
-exports.dislikeReview =
-async (req, res) => {
-
-    try {
-
-        const review =
-        await Review.findById(
-            req.params.id
-        );
-
-        review.dislikes += 1;
-
-        await review.save();
-
-        res.json(review);
-
-    } catch (error) {
-
-        console.log(error);
-
-        res.status(500).json(error);
-    }
 };

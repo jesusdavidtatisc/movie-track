@@ -1,32 +1,28 @@
+const express =
+require("express");
+
 const router =
-require("express").Router();
+express.Router();
 
 const {
 
     createReview,
-    getMovieReviews,
-    likeReview,
-    dislikeReview
+
+    getMovieReviews
 
 } = require(
     "../controllers/reviewController"
 );
 
-router.post("/", createReview);
+router.post(
+    "/",
+    createReview
+);
 
 router.get(
-    "/:movieId",
+    "/movie/:id",
     getMovieReviews
 );
 
-router.put(
-    "/like/:id",
-    likeReview
-);
-
-router.put(
-    "/dislike/:id",
-    dislikeReview
-);
-
-module.exports = router;
+module.exports =
+router;

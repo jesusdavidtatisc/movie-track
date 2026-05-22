@@ -1,19 +1,12 @@
-import {
+import { useEffect, useState } from "react";
 
-    useEffect,
-    useState
+import axios from "axios";
 
-} from "react";
+import { useParams } from "react-router-dom";
 
-import {
+import Navbar from "../components/Navbar";
 
-    useParams
-
-} from "react-router-dom";
-
-import API from "../services/api";
-
-function MovieDetails({ user }) {
+function MovieDetails() {
 
     const { id } =
     useParams();
@@ -24,7 +17,7 @@ function MovieDetails({ user }) {
     const [reviews, setReviews] =
     useState([]);
 
-    const [reviewText, setReviewText] =
+    const [comentario, setComentario] =
     useState("");
 
     useEffect(() => {
@@ -35,13 +28,14 @@ function MovieDetails({ user }) {
 
     }, []);
 
-    const getMovie = async () => {
+    const getMovie =
+    async () => {
 
         try {
 
             const res =
-            await API.get(
-                `/movies/${id}`
+            await axios.get(
+                `http://localhost:5000/api/movies/${id}`
             );
 
             setMovie(res.data);
@@ -52,13 +46,14 @@ function MovieDetails({ user }) {
         }
     };
 
-    const getReviews = async () => {
+    const getReviews =
+    async () => {
 
         try {
 
             const res =
-            await API.get(
-                `/reviews/${id}`
+            await axios.get(
+                `http://localhost:5000/api/reviews/movie/${id}`
             );
 
             setReviews(res.data);
@@ -69,67 +64,36 @@ function MovieDetails({ user }) {
         }
     };
 
-    const submitReview = async () => {
+    const createReview =
+    async (e) => {
+
+        e.preventDefault();
 
         try {
 
-            await API.post(
-
-                "/reviews",
-
+            await axios.post(
+                "http://localhost:5000/api/reviews",
                 {
 
                     movieId: id,
 
-                    userId: user._id,
-
-                    comentario:
-                    reviewText
+                    comentario
 
                 }
-
             );
 
-            setReviewText("");
+            setComentario("");
 
             getReviews();
 
         } catch (error) {
 
             console.log(error);
+
+            alert(
+                "Error creando reseña"
+            );
         }
-    };
-
-    const likeReview =
-    async (reviewId) => {
-
-        await API.put(
-
-            `/reviews/like/${reviewId}`,
-
-            {
-                userId: user._id
-            }
-
-        );
-
-        getReviews();
-    };
-
-    const dislikeReview =
-    async (reviewId) => {
-
-        await API.put(
-
-            `/reviews/dislike/${reviewId}`,
-
-            {
-                userId: user._id
-            }
-
-        );
-
-        getReviews();
     };
 
     if (!movie) {
@@ -139,159 +103,206 @@ function MovieDetails({ user }) {
 
     return (
 
-        <div className="container">
+        <div>
 
-            <div className="movie-card">
+            <Navbar />
 
-                <img
+            <div
+                style={{
+                    padding:"30px",
+                    color:"white"
+                }}
+            >
 
-                    src={movie.imagen}
+                <div
+                    style={{
+                        display:"flex",
+                        gap:"30px",
+                        alignItems:"flex-start",
+                        marginBottom:"40px",
+                        flexWrap:"wrap"
+                    }}
+                >
 
-                    className="movie-image"
+                    <img
 
-                />
+                        src={movie.imagen}
 
-                <div className="movie-content">
+                        alt={movie.nombre}
 
-                    <h1 className="movie-title">
+                        style={{
 
-                        {movie.nombre}
+                            width:"250px",
 
-                    </h1>
+                            height:"370px",
 
-                    <p>
-                        🎭 {movie.genero}
-                    </p>
+                            objectFit:"cover",
 
-                    <p>
-                        📅 {movie.anio}
-                    </p>
+                            borderRadius:"12px"
 
-                    <p className="rating">
+                        }}
 
-                        ⭐
-                        {movie.calificacion}/10
+                        onError={(e) => {
 
-                    </p>
+                            e.target.src =
+                            "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg";
+                        }}
+
+                    />
+
+                    <div>
+
+                        <h1>
+                            {movie.nombre}
+                        </h1>
+
+                        <p>
+                            🎭 {movie.genero}
+                        </p>
+
+                        <p>
+                            📅 {movie.anio}
+                        </p>
+
+                        <p>
+                            ⭐ {movie.calificacion}/10
+                        </p>
+
+                    </div>
 
                 </div>
 
-            </div>
-
-            <br />
-
-            <div className="movie-card">
-
-                <div className="movie-content">
-
-                    <h2>
-                        📝 Reviews
-                    </h2>
+                <form
+                    onSubmit={createReview}
+                    style={{
+                        marginBottom:"30px"
+                    }}
+                >
 
                     <textarea
 
-                        placeholder="Escribe tu opinión"
+                        placeholder="Escribe tu reseña..."
 
-                        value={reviewText}
+                        value={comentario}
 
                         onChange={(e) =>
 
-                            setReviewText(
+                            setComentario(
                                 e.target.value
                             )
 
                         }
 
+                        required
+
+                        style={{
+
+                            width:"100%",
+
+                            height:"120px",
+
+                            padding:"15px",
+
+                            borderRadius:"10px",
+
+                            border:"none",
+
+                            resize:"none",
+
+                            marginBottom:"15px"
+
+                        }}
+
                     />
 
                     <button
-                        onClick={submitReview}
+
+                        type="submit"
+
+                        style={{
+
+                            padding:"12px 20px",
+
+                            background:"#e50914",
+
+                            color:"white",
+
+                            border:"none",
+
+                            borderRadius:"8px",
+
+                            cursor:"pointer",
+
+                            fontWeight:"bold"
+
+                        }}
+
                     >
 
-                        Publicar review
+                        Publicar reseña
 
                     </button>
 
-                    <br />
-                    <br />
+                </form>
 
-                    {
+                <h2>
+                    Reseñas
+                </h2>
 
-                        reviews.map(review => (
+                {
 
-                            <div
+                    reviews.length === 0
 
-                                key={review._id}
+                    ?
 
-                                className="review-card"
+                    <p>
+                        No hay reseñas
+                    </p>
 
-                            >
+                    :
 
-                                <h4>
+                    reviews.map(review => (
 
-                                    {
-                                        review.userId?.username
-                                    }
+                        <div
 
-                                </h4>
+                            key={review._id}
 
-                                <p>
+                            style={{
 
-                                    {
-                                        review.comentario
-                                    }
+                                background:"#1f1f1f",
 
-                                </p>
+                                padding:"20px",
 
-                                <div
-                                    className="review-buttons"
-                                >
+                                borderRadius:"10px",
 
-                                    <button
+                                marginBottom:"15px"
 
-                                        onClick={() =>
+                            }}
 
-                                            likeReview(
-                                                review._id
-                                            )
+                        >
 
-                                        }
+                            <h4>
 
-                                    >
+                                {
 
-                                        👍
-                                        {
-                                            review.likes.length
-                                        }
+                                    review.userId?.name
 
-                                    </button>
+                                    ||
 
-                                    <button
+                                    "Usuario"
 
-                                        onClick={() =>
+                                }
 
-                                            dislikeReview(
-                                                review._id
-                                            )
+                            </h4>
 
-                                        }
+                            <p>
+                                {review.comentario}
+                            </p>
 
-                                    >
+                        </div>
 
-                                        👎
-                                        {
-                                            review.dislikes.length
-                                        }
-
-                                    </button>
-
-                                </div>
-
-                            </div>
-                        ))
-                    }
-
-                </div>
+                    ))
+                }
 
             </div>
 

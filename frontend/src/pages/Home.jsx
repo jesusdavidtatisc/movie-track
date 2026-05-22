@@ -1,48 +1,33 @@
 import { useEffect, useState } from "react";
-
 import axios from "axios";
-
 import Navbar from "../components/Navbar";
-
 import { Link } from "react-router-dom";
 
 function Home() {
 
-    const [movies, setMovies] =
-    useState([]);
+    const [movies, setMovies] = useState([]);
 
-    const [showForm, setShowForm] =
-    useState(false);
+    const [showForm, setShowForm] = useState(false);
 
-    const [search, setSearch] =
-    useState("");
+    const [search, setSearch] = useState("");
 
-    const [genero, setGenero] =
-    useState("");
+    const [genero, setGenero] = useState("");
 
-    const [anio, setAnio] =
-    useState("");
+    const [anio, setAnio] = useState("");
 
-    const [rating, setRating] =
-    useState("");
+    const [rating, setRating] = useState("");
 
-    const [nombre, setNombre] =
-    useState("");
+    const [nombre, setNombre] = useState("");
 
-    const [nuevoGenero, setNuevoGenero] =
-    useState("");
+    const [nuevoGenero, setNuevoGenero] = useState("");
 
-    const [nuevoAnio, setNuevoAnio] =
-    useState("");
+    const [nuevoAnio, setNuevoAnio] = useState("");
 
-    const [calificacion, setCalificacion] =
-    useState("");
+    const [calificacion, setCalificacion] = useState("");
 
-    const [imagen, setImagen] =
-    useState("");
+    const [imagen, setImagen] = useState("");
 
-    const token =
-    localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
     useEffect(() => {
 
@@ -50,13 +35,11 @@ function Home() {
 
     }, []);
 
-    const getMovies =
-    async () => {
+    const getMovies = async () => {
 
         try {
 
-            const res =
-            await axios.get(
+            const res = await axios.get(
                 "http://localhost:5000/api/movies"
             );
 
@@ -65,16 +48,15 @@ function Home() {
         } catch (error) {
 
             console.log(error);
+
         }
     };
 
-    const searchMovies =
-    async () => {
+    const searchMovies = async () => {
 
         try {
 
-            const res =
-            await axios.get(
+            const res = await axios.get(
                 `http://localhost:5000/api/movies/search?q=${search}`
             );
 
@@ -83,16 +65,15 @@ function Home() {
         } catch (error) {
 
             console.log(error);
+
         }
     };
 
-    const filterMovies =
-    async () => {
+    const filterMovies = async () => {
 
         try {
 
-            const res =
-            await axios.get(
+            const res = await axios.get(
                 `http://localhost:5000/api/movies/filter?genero=${genero}&anio=${anio}&rating=${rating}`
             );
 
@@ -101,11 +82,11 @@ function Home() {
         } catch (error) {
 
             console.log(error);
+
         }
     };
 
-    const addMovie =
-    async (e) => {
+    const addMovie = async (e) => {
 
         e.preventDefault();
 
@@ -120,8 +101,7 @@ function Home() {
                     nombre,
                     genero: nuevoGenero,
                     anio: Number(nuevoAnio),
-                    calificacion:
-                    Number(calificacion),
+                    calificacion: Number(calificacion),
                     imagen
 
                 },
@@ -131,7 +111,7 @@ function Home() {
                     headers: {
 
                         Authorization:
-                        `Bearer ${token}`
+                            `Bearer ${token}`
 
                     }
 
@@ -139,9 +119,7 @@ function Home() {
 
             );
 
-            alert(
-                "Película agregada"
-            );
+            alert("Película agregada");
 
             setNombre("");
             setNuevoGenero("");
@@ -157,26 +135,27 @@ function Home() {
 
             console.log(error);
 
-            alert(
-                "Error agregando película"
-            );
+            alert("Error agregando película");
+
         }
     };
 
-    const logout =
-    () => {
+    const logout = () => {
 
-        localStorage.removeItem(
-            "token"
-        );
+        localStorage.removeItem("token");
 
-        window.location.href =
-        "/login";
+        window.location.href = "/login";
+
     };
 
     return (
 
-        <div>
+        <div
+            style={{
+                minHeight: "100vh",
+                background: "#111827"
+            }}
+        >
 
             <Navbar
 
@@ -201,35 +180,31 @@ function Home() {
 
             <div
                 style={{
-                    padding:"20px"
+                    padding: "20px"
                 }}
             >
 
                 <button
 
                     onClick={() =>
-
-                        setShowForm(
-                            !showForm
-                        )
-
+                        setShowForm(!showForm)
                     }
 
                     style={{
 
-                        padding:"12px 20px",
+                        padding: "12px 20px",
 
-                        background:"#e50914",
+                        background: "#e50914",
 
-                        color:"white",
+                        color: "white",
 
-                        border:"none",
+                        border: "none",
 
-                        borderRadius:"8px",
+                        borderRadius: "8px",
 
-                        cursor:"pointer",
+                        cursor: "pointer",
 
-                        fontWeight:"bold"
+                        fontWeight: "bold"
 
                     }}
 
@@ -239,13 +214,13 @@ function Home() {
 
                         showForm
 
-                        ?
+                            ?
 
-                        "Cerrar Formulario"
+                            "Cerrar Formulario"
 
-                        :
+                            :
 
-                        "Agregar Película"
+                            "Agregar Película"
 
                     }
 
@@ -258,15 +233,37 @@ function Home() {
                 showForm && (
 
                     <div
-                        className="add-movie-container"
+
+                        style={{
+
+                            background: "#1f2937",
+
+                            margin: "20px",
+
+                            padding: "25px",
+
+                            borderRadius: "15px"
+
+                        }}
+
                     >
 
-                        <h2>
+                        <h2
+                            style={{
+                                color: "white",
+                                marginBottom: "20px"
+                            }}
+                        >
                             Nueva Película
                         </h2>
 
                         <form
                             onSubmit={addMovie}
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "15px"
+                            }}
                         >
 
                             <input
@@ -278,14 +275,22 @@ function Home() {
                                 value={nombre}
 
                                 onChange={(e) =>
-
                                     setNombre(
                                         e.target.value
                                     )
-
                                 }
 
                                 required
+
+                                style={{
+
+                                    padding: "12px",
+
+                                    borderRadius: "8px",
+
+                                    border: "none"
+
+                                }}
 
                             />
 
@@ -294,14 +299,22 @@ function Home() {
                                 value={nuevoGenero}
 
                                 onChange={(e) =>
-
                                     setNuevoGenero(
                                         e.target.value
                                     )
-
                                 }
 
                                 required
+
+                                style={{
+
+                                    padding: "12px",
+
+                                    borderRadius: "8px",
+
+                                    border: "none"
+
+                                }}
 
                             >
 
@@ -344,14 +357,22 @@ function Home() {
                                 value={nuevoAnio}
 
                                 onChange={(e) =>
-
                                     setNuevoAnio(
                                         e.target.value
                                     )
-
                                 }
 
                                 required
+
+                                style={{
+
+                                    padding: "12px",
+
+                                    borderRadius: "8px",
+
+                                    border: "none"
+
+                                }}
 
                             />
 
@@ -368,14 +389,22 @@ function Home() {
                                 value={calificacion}
 
                                 onChange={(e) =>
-
                                     setCalificacion(
                                         e.target.value
                                     )
-
                                 }
 
                                 required
+
+                                style={{
+
+                                    padding: "12px",
+
+                                    borderRadius: "8px",
+
+                                    border: "none"
+
+                                }}
 
                             />
 
@@ -388,19 +417,47 @@ function Home() {
                                 value={imagen}
 
                                 onChange={(e) =>
-
                                     setImagen(
                                         e.target.value
                                     )
-
                                 }
 
                                 required
 
+                                style={{
+
+                                    padding: "12px",
+
+                                    borderRadius: "8px",
+
+                                    border: "none"
+
+                                }}
+
                             />
 
                             <button
+
                                 type="submit"
+
+                                style={{
+
+                                    padding: "12px",
+
+                                    background: "#e50914",
+
+                                    color: "white",
+
+                                    border: "none",
+
+                                    borderRadius: "8px",
+
+                                    cursor: "pointer",
+
+                                    fontWeight: "bold"
+
+                                }}
+
                             >
 
                                 Guardar Película
@@ -412,9 +469,25 @@ function Home() {
                     </div>
 
                 )
+
             }
 
-            <div className="movies-grid">
+            <div
+
+                style={{
+
+                    display: "grid",
+
+                    gridTemplateColumns:
+                        "repeat(auto-fill, minmax(250px, 1fr))",
+
+                    gap: "25px",
+
+                    padding: "20px"
+
+                }}
+
+            >
 
                 {
 
@@ -424,56 +497,170 @@ function Home() {
 
                             key={movie._id}
 
-                            className="movie-card"
+                            style={{
+
+                                background: "#1f2937",
+
+                                borderRadius: "15px",
+
+                                overflow: "hidden",
+
+                                boxShadow:
+                                    "0 4px 12px rgba(0,0,0,0.4)",
+
+                                display: "flex",
+
+                                flexDirection: "column"
+
+                            }}
 
                         >
 
-                            <img
-  src={movie.imagen}
-  alt={movie.nombre}
-  onError={(e) => {
-    e.target.src =
-      "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg";
-  }}
-  className="w-full h-72 object-cover rounded-xl"
-/>
+                            <div
 
-                            <h2>
-                                {movie.nombre}
-                            </h2>
+                                style={{
 
-                            <p>
-                                🎭 {movie.genero}
-                            </p>
+                                    width: "100%",
 
-                            <p>
-                                📅 {movie.anio}
-                            </p>
+                                    height: "380px",
 
-                            <p>
-                                ⭐ {movie.calificacion}/10
-                            </p>
+                                    overflow: "hidden",
 
-                            <Link
-                                to={`/movie/${movie._id}`}
+                                    background: "#000"
+
+                                }}
+
                             >
 
-                                <button>
+                                <img
 
-                                    Reseñas
+                                    src={movie.imagen}
 
-                                </button>
+                                    alt={movie.nombre}
 
-                            </Link>
+                                    onError={(e) => {
+
+                                        e.target.src =
+                                            "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg";
+
+                                    }}
+
+                                    style={{
+
+                                        width: "100%",
+
+                                        height: "100%",
+
+                                        objectFit: "cover"
+
+                                    }}
+
+                                />
+
+                            </div>
+
+                            <div
+
+                                style={{
+
+                                    padding: "15px",
+
+                                    color: "white",
+
+                                    flex: "1"
+
+                                }}
+
+                            >
+
+                                <h2
+
+                                    style={{
+
+                                        marginBottom: "10px",
+
+                                        fontSize: "22px"
+
+                                    }}
+
+                                >
+
+                                    {movie.nombre}
+
+                                </h2>
+
+                                <p>
+                                    🎭 {movie.genero}
+                                </p>
+
+                                <p>
+                                    📅 {movie.anio}
+                                </p>
+
+                                <p
+
+                                    style={{
+
+                                        color: "#facc15",
+
+                                        fontWeight: "bold",
+
+                                        marginBottom: "15px"
+
+                                    }}
+
+                                >
+
+                                    ⭐ {movie.calificacion}/10
+
+                                </p>
+
+                                <Link
+                                    to={`/movie/${movie._id}`}
+                                >
+
+                                    <button
+
+                                        style={{
+
+                                            width: "100%",
+
+                                            padding: "10px",
+
+                                            background: "#e50914",
+
+                                            color: "white",
+
+                                            border: "none",
+
+                                            borderRadius: "8px",
+
+                                            cursor: "pointer",
+
+                                            fontWeight: "bold"
+
+                                        }}
+
+                                    >
+
+                                        Reseñas
+
+                                    </button>
+
+                                </Link>
+
+                            </div>
 
                         </div>
 
                     ))
+
                 }
 
             </div>
 
         </div>
+
     );
 }
 

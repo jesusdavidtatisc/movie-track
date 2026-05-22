@@ -87,13 +87,19 @@ const generateReviews = async () => {
             const randomLikes =
             users
             .sort(() => 0.5 - Math.random())
-            .slice(0, Math.floor(Math.random() * 10))
+            .slice(
+                0,
+                Math.floor(Math.random() * 10)
+            )
             .map(user => user._id);
 
             const randomDislikes =
             users
             .sort(() => 0.5 - Math.random())
-            .slice(0, Math.floor(Math.random() * 5))
+            .slice(
+                0,
+                Math.floor(Math.random() * 5)
+            )
             .map(user => user._id);
 
             reviews.push({
@@ -114,6 +120,7 @@ const generateReviews = async () => {
                 randomDislikes
 
             });
+
         }
 
         await Review.insertMany(
@@ -129,6 +136,7 @@ const generateReviews = async () => {
     } catch (error) {
 
         console.log(error);
+
     }
 };
 
