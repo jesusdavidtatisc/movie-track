@@ -41,6 +41,9 @@ function Home() {
     const [imagen, setImagen] =
     useState("");
 
+    const [editingMovie, setEditingMovie] =
+    useState(null);
+
     useEffect(() => {
 
         getMovies();
@@ -163,6 +166,66 @@ function Home() {
         }
     };
 
+    const updateMovie =
+    async (e) => {
+
+        e.preventDefault();
+
+        try {
+
+            await axios.put(
+
+                `http://localhost:5000/api/movies/${editingMovie}`,
+
+                {
+
+                    nombre,
+
+                    genero:
+                    nuevoGenero,
+
+                    anio:
+                    Number(
+                        nuevoAnio
+                    ),
+
+                    calificacion:
+                    Number(
+                        calificacion
+                    ),
+
+                    imagen
+
+                }
+
+            );
+
+            alert(
+                "Película actualizada"
+            );
+
+            setEditingMovie(null);
+
+            setNombre("");
+
+            setNuevoGenero("");
+
+            setNuevoAnio("");
+
+            setCalificacion("");
+
+            setImagen("");
+
+            setShowForm(false);
+
+            getMovies();
+
+        } catch (error) {
+
+            console.log(error);
+        }
+    };
+
     const deleteMovie =
     async (id) => {
 
@@ -201,31 +264,31 @@ function Home() {
 
             <Navbar
 
-    search={search}
+                search={search}
 
-    setSearch={setSearch}
+                setSearch={setSearch}
 
-    searchMovies={searchMovies}
+                searchMovies={searchMovies}
 
-    genero={genero}
+                genero={genero}
 
-    setGenero={setGenero}
+                setGenero={setGenero}
 
-    anio={anio}
+                anio={anio}
 
-    setAnio={setAnio}
+                setAnio={setAnio}
 
-    rating={rating}
+                rating={rating}
 
-    setRating={setRating}
+                setRating={setRating}
 
-    filterMovies={filterMovies}
+                filterMovies={filterMovies}
 
-    logout={logout}
+                logout={logout}
 
-    movies={movies}
+                movies={movies}
 
-/>
+            />
 
             <div
                 style={{
@@ -236,11 +299,9 @@ function Home() {
                 <button
 
                     onClick={() =>
-
                         setShowForm(
                             !showForm
                         )
-
                     }
 
                     style={{
@@ -269,7 +330,7 @@ function Home() {
 
                         ?
 
-                        "Cerrar Formulario"
+                        "Cancelar"
 
                         :
 
@@ -281,141 +342,337 @@ function Home() {
 
             </div>
 
-            {
+           {
+    showForm && (
 
-                showForm && (
+        <div
 
-                    <div
-                        className="add-movie-container"
+            style={{
+
+                position:"fixed",
+
+                top:0,
+
+                left:0,
+
+                width:"100%",
+
+                height:"100vh",
+
+                background:"rgba(0,0,0,0.7)",
+
+                display:"flex",
+
+                justifyContent:"center",
+
+                alignItems:"center",
+
+                zIndex:999
+
+            }}
+
+        >
+
+            <div
+
+                style={{
+
+                    background:"#1e1e1e",
+
+                    padding:"30px",
+
+                    borderRadius:"16px",
+
+                    width:"400px",
+
+                    display:"flex",
+
+                    flexDirection:"column",
+
+                    gap:"15px",
+
+                    boxShadow:"0 0 20px rgba(0,0,0,0.5)"
+
+                }}
+
+            >
+
+                <h2
+                    style={{
+                        color:"white",
+                        textAlign:"center"
+                    }}
+                >
+
+                    {
+
+                        editingMovie
+
+                        ?
+
+                        "Editar Película"
+
+                        :
+
+                        "Nueva Película"
+
+                    }
+
+                </h2>
+
+                <form
+
+                    onSubmit={
+
+                        editingMovie
+
+                        ?
+
+                        updateMovie
+
+                        :
+
+                        addMovie
+
+                    }
+
+                    style={{
+
+                        display:"flex",
+
+                        flexDirection:"column",
+
+                        gap:"15px"
+
+                    }}
+
+                >
+
+                    <input
+
+                        type="text"
+
+                        placeholder="Nombre"
+
+                        value={nombre}
+
+                        onChange={(e) =>
+                            setNombre(
+                                e.target.value
+                            )
+                        }
+
+                        required
+
+                        style={{
+
+                            padding:"12px",
+
+                            borderRadius:"8px",
+
+                            border:"none"
+
+                        }}
+
+                    />
+
+                    <input
+
+                        type="text"
+
+                        placeholder="Género"
+
+                        value={nuevoGenero}
+
+                        onChange={(e) =>
+                            setNuevoGenero(
+                                e.target.value
+                            )
+                        }
+
+                        required
+
+                        style={{
+
+                            padding:"12px",
+
+                            borderRadius:"8px",
+
+                            border:"none"
+
+                        }}
+
+                    />
+
+                    <input
+
+                        type="number"
+
+                        placeholder="Año"
+
+                        value={nuevoAnio}
+
+                        onChange={(e) =>
+                            setNuevoAnio(
+                                e.target.value
+                            )
+                        }
+
+                        required
+
+                        style={{
+
+                            padding:"12px",
+
+                            borderRadius:"8px",
+
+                            border:"none"
+
+                        }}
+
+                    />
+
+                    <input
+
+                        type="number"
+
+                        min="1"
+
+                        max="10"
+
+                        placeholder="Calificación"
+
+                        value={calificacion}
+
+                        onChange={(e) =>
+                            setCalificacion(
+                                e.target.value
+                            )
+                        }
+
+                        required
+
+                        style={{
+
+                            padding:"12px",
+
+                            borderRadius:"8px",
+
+                            border:"none"
+
+                        }}
+
+                    />
+
+                    <input
+
+                        type="text"
+
+                        placeholder="URL imagen"
+
+                        value={imagen}
+
+                        onChange={(e) =>
+                            setImagen(
+                                e.target.value
+                            )
+                        }
+
+                        required
+
+                        style={{
+
+                            padding:"12px",
+
+                            borderRadius:"8px",
+
+                            border:"none"
+
+                        }}
+
+                    />
+
+                    <button
+
+                        type="submit"
+
+                        style={{
+
+                            background:"#e50914",
+
+                            color:"white",
+
+                            border:"none",
+
+                            padding:"12px",
+
+                            borderRadius:"8px",
+
+                            cursor:"pointer",
+
+                            fontWeight:"bold"
+
+                        }}
+
                     >
 
-                        <h2>
-                            Nueva Película
-                        </h2>
+                        {
 
-                        <form
-                            onSubmit={addMovie}
-                        >
+                            editingMovie
 
-                            <input
+                            ?
 
-                                type="text"
+                            "Actualizar Película"
 
-                                placeholder="Nombre"
+                            :
 
-                                value={nombre}
+                            "Guardar Película"
 
-                                onChange={(e) =>
+                        }
 
-                                    setNombre(
-                                        e.target.value
-                                    )
+                    </button>
 
-                                }
+                    <button
 
-                                required
+                        type="button"
 
-                            />
+                        onClick={() => {
 
-                            <input
+                            setShowForm(false);
 
-                                type="text"
+                            setEditingMovie(null);
+                        }}
 
-                                placeholder="Género"
+                        style={{
 
-                                value={nuevoGenero}
+                            background:"#444",
 
-                                onChange={(e) =>
+                            color:"white",
 
-                                    setNuevoGenero(
-                                        e.target.value
-                                    )
+                            border:"none",
 
-                                }
+                            padding:"12px",
 
-                                required
+                            borderRadius:"8px",
 
-                            />
+                            cursor:"pointer"
 
-                            <input
+                        }}
 
-                                type="number"
+                    >
 
-                                placeholder="Año"
+                        Cancelar
 
-                                value={nuevoAnio}
+                    </button>
 
-                                onChange={(e) =>
+                </form>
 
-                                    setNuevoAnio(
-                                        e.target.value
-                                    )
+            </div>
 
-                                }
+        </div>
 
-                                required
-
-                            />
-
-                            <input
-
-                                type="number"
-
-                                min="1"
-
-                                max="10"
-
-                                placeholder="Calificación"
-
-                                value={calificacion}
-
-                                onChange={(e) =>
-
-                                    setCalificacion(
-                                        e.target.value
-                                    )
-
-                                }
-
-                                required
-
-                            />
-
-                            <input
-
-                                type="text"
-
-                                placeholder="URL imagen"
-
-                                value={imagen}
-
-                                onChange={(e) =>
-
-                                    setImagen(
-                                        e.target.value
-                                    )
-
-                                }
-
-                                required
-
-                            />
-
-                            <button
-                                type="submit"
-                            >
-
-                                Guardar Película
-
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                )
-            }
-
+    )
+}
             <div className="movies-grid">
 
                 {
@@ -483,6 +740,63 @@ function Home() {
                                 </button>
 
                             </Link>
+
+                            <button
+
+                                onClick={() => {
+
+                                    setEditingMovie(
+                                        movie._id
+                                    );
+
+                                    setNombre(
+                                        movie.nombre
+                                    );
+
+                                    setNuevoGenero(
+                                        movie.genero
+                                    );
+
+                                    setNuevoAnio(
+                                        movie.anio
+                                    );
+
+                                    setCalificacion(
+                                        movie.calificacion
+                                    );
+
+                                    setImagen(
+                                        movie.imagen
+                                    );
+
+                                    setShowForm(true);
+                                }}
+
+                                style={{
+
+                                    marginTop:"10px",
+
+                                    background:"#2563eb",
+
+                                    color:"white",
+
+                                    border:"none",
+
+                                    padding:"10px",
+
+                                    borderRadius:"8px",
+
+                                    cursor:"pointer",
+
+                                    width:"100%"
+
+                                }}
+
+                            >
+
+                                Editar
+
+                            </button>
 
                             {
 
