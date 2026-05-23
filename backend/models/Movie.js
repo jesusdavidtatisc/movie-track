@@ -4,59 +4,48 @@ require("mongoose");
 const movieSchema =
 new mongoose.Schema({
 
-    nombre: {
+    nombre:{
 
-        type: String,
+        type:String,
 
-        required: true
-
+        required:true
     },
 
-    genero: {
+    genero:{
 
-        type: String,
+        type:String,
 
-        required: true
-
+        required:true
     },
 
-    anio: {
+    anio:{
 
-        type: Number,
+        type:Number,
 
-        required: true
-
+        required:true
     },
 
-    calificacion: {
+    calificacion:{
 
-        type: Number,
+        type:Number,
 
-        required: true
-
+        required:true
     },
 
-    imagen: {
+    imagen:{
 
-        type: String,
+        type:String,
 
-        required: true
-
+        required:true
     },
 
-    creadaPorUsuario: {
+    creadoPor:{
 
-        type: Boolean,
+        type:mongoose.Schema.Types.ObjectId,
 
-        default: false
+        ref:"User"
 
     }
-
-},
-
-{
-
-    timestamps: true
 
 });
 

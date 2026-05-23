@@ -7,6 +7,19 @@ import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 
 function Home() {
+    
+    const token =
+    localStorage.getItem(
+            "token"
+    );
+    const user =
+        JSON.parse(
+
+    localStorage.getItem(
+        "user"
+    )
+
+);
 
     const [movies, setMovies] =
     useState([]);
@@ -117,26 +130,28 @@ function Home() {
 
                 {
 
-                    nombre,
+                        nombre,
 
-                    genero:
-                    nuevoGenero,
+                        genero:nuevoGenero,
 
-                    anio:
-                    Number(
-                        nuevoAnio
-                    ),
+                         anio:Number(nuevoAnio),
 
-                    calificacion:
-                    Number(
-                        calificacion
-                    ),
+                        calificacion:Number(calificacion),
 
-                    imagen
+                         imagen
 
-                }
+                },
 
-            );
+        {
+
+            headers:{
+            Authorization:
+            `Bearer ${token}`
+             }
+
+        }
+
+     );
 
             alert(
                 "Película agregada"
@@ -158,12 +173,16 @@ function Home() {
 
         } catch (error) {
 
-            console.log(error);
+             console.log(error);
 
-            alert(
-                "Error agregando película"
-            );
-        }
+            console.log(
+             error.response?.data
+             );
+
+        alert(
+         "Error agregando película"
+         );
+    }
     };
 
     const updateMovie =
@@ -177,28 +196,32 @@ function Home() {
 
                 `http://localhost:5000/api/movies/${editingMovie}`,
 
-                {
+    {
 
-                    nombre,
+        nombre,
 
-                    genero:
-                    nuevoGenero,
+        genero:nuevoGenero,
 
-                    anio:
-                    Number(
-                        nuevoAnio
-                    ),
+        anio:Number(nuevoAnio),
 
-                    calificacion:
-                    Number(
-                        calificacion
-                    ),
+        calificacion:Number(calificacion),
 
-                    imagen
+        imagen
 
-                }
+    },
 
-            );
+    {
+
+        headers:{
+
+            Authorization:
+            `Bearer ${token}`
+
+        }
+
+    }
+
+);
 
             alert(
                 "Película actualizada"
@@ -231,9 +254,22 @@ function Home() {
 
         try {
 
-            await axios.delete(
-                `http://localhost:5000/api/movies/${id}`
-            );
+           await axios.delete(
+
+    `http://localhost:5000/api/movies/${id}`,
+
+    {
+
+        headers:{
+
+            Authorization:
+            `Bearer ${token}`
+
+        }
+
+    }
+
+);
 
             getMovies();
 
@@ -741,66 +777,73 @@ function Home() {
 
                             </Link>
 
-                            <button
+                            {
 
-                                onClick={() => {
+    movie.creadoPor?.toString() === user?._id && (
 
-                                    setEditingMovie(
-                                        movie._id
-                                    );
+        <button
 
-                                    setNombre(
-                                        movie.nombre
-                                    );
+            onClick={() => {
 
-                                    setNuevoGenero(
-                                        movie.genero
-                                    );
+                setEditingMovie(
+                    movie._id
+                );
 
-                                    setNuevoAnio(
-                                        movie.anio
-                                    );
+                setNombre(
+                    movie.nombre
+                );
 
-                                    setCalificacion(
-                                        movie.calificacion
-                                    );
+                setNuevoGenero(
+                    movie.genero
+                );
 
-                                    setImagen(
-                                        movie.imagen
-                                    );
+                setNuevoAnio(
+                    movie.anio
+                );
 
-                                    setShowForm(true);
-                                }}
+                setCalificacion(
+                    movie.calificacion
+                );
 
-                                style={{
+                setImagen(
+                    movie.imagen
+                );
 
-                                    marginTop:"10px",
+                setShowForm(true);
+            }}
 
-                                    background:"#2563eb",
+            style={{
 
-                                    color:"white",
+                marginTop:"10px",
 
-                                    border:"none",
+                background:"#2563eb",
 
-                                    padding:"10px",
+                color:"white",
 
-                                    borderRadius:"8px",
+                border:"none",
 
-                                    cursor:"pointer",
+                padding:"10px",
 
-                                    width:"100%"
+                borderRadius:"8px",
 
-                                }}
+                cursor:"pointer",
 
-                            >
+                width:"100%"
 
-                                Editar
+            }}
 
-                            </button>
+        >
+
+            Editar
+
+        </button>
+
+    )
+}
 
                             {
 
-                                movie.creadaPorUsuario && (
+                                movie.creadoPor?.toString() === user?._id && (
 
                                     <button
 

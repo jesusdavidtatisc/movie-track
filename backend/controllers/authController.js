@@ -4,6 +4,9 @@ require("../models/User");
 const bcrypt =
 require("bcryptjs");
 
+const jwt =
+require("jsonwebtoken");
+
 exports.register =
 async (req, res) => {
 
@@ -96,7 +99,32 @@ async (req, res) => {
             });
         }
 
-        res.json(user);
+        const token =
+            jwt.sign(
+
+        {
+
+        userId:user._id
+
+        },
+
+    process.env.JWT_SECRET,
+
+    {
+
+        expiresIn:"7d"
+
+    }
+
+);
+
+res.json({
+
+    token,
+
+    user
+
+});
 
     } catch (error) {
 

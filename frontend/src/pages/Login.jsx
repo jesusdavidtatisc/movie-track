@@ -38,7 +38,8 @@ function Login({ setUser }) {
         });
     };
 
-    const login = async () => {
+    const login =
+    async () => {
 
         try {
 
@@ -53,15 +54,25 @@ function Login({ setUser }) {
 
             localStorage.setItem(
 
+                "token",
+
+                res.data.token
+
+            );
+
+            localStorage.setItem(
+
                 "user",
 
                 JSON.stringify(
-                    res.data
+                    res.data.user
                 )
 
             );
 
-            setUser(res.data);
+            setUser(
+                res.data.user
+            );
 
             navigate("/");
 
