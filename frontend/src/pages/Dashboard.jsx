@@ -492,7 +492,7 @@ padding:"10px"
 
 <Card>
 
-⭐ Total reseñas
+⭐ Total reseñas de  Audiencia
 
 <h1>
 
