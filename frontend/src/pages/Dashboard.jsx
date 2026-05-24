@@ -1,169 +1,221 @@
-import {
-
-    useEffect,
-    useState
-
-} from "react";
-
-import API from "../services/api";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 function Dashboard() {
 
-    const [stats, setStats] =
-    useState(null);
+const [data,setData]=useState(null);
 
-    useEffect(() => {
+useEffect(()=>{
 
-        const getStats = async () => {
+load();
 
-            try {
+},[]);
 
-                const res =
-                await API.get(
-                    "/dashboard"
-                );
+const load=async()=>{
 
-                setStats(res.data);
+try{
 
-            } catch (error) {
+const res=
+await axios.get(
+"http://localhost:5000/api/dashboard/stats"
+);
 
-                console.log(error);
-            }
-        };
+setData(
+res.data
+);
 
-        getStats();
+}catch(err){
 
-    }, []);
+console.log(err);
 
-    if (!stats) {
+}
 
-        return <h1>Cargando...</h1>;
-    }
+};
 
-    return (
+if(!data){
 
-        <div className="container">
+return(
 
-            <h1 className="logo">
-                📊 Dashboard
-            </h1>
+<h1
+style={{
+textAlign:"center",
+marginTop:"50px"
+}}
+>
 
-            <div className="movies-grid">
+Cargando Dashboard...
 
-                <div className="movie-card">
+</h1>
 
-                    <div className="movie-content">
+);
 
-                        <h2>
-                            🎬 Películas
-                        </h2>
+}
 
-                        <h1>
-                            {stats.totalMovies}
-                        </h1>
+return(
 
-                    </div>
+<div
+style={{
+padding:"40px"
+}}
+>
 
-                </div>
+<Link to="/">
 
-                <div className="movie-card">
+<button>
 
-                    <div className="movie-content">
+← Volver
 
-                        <h2>
-                            👤 Usuarios
-                        </h2>
+</button>
 
-                        <h1>
-                            {stats.totalUsers}
-                        </h1>
+</Link>
 
-                    </div>
+<h1>
 
-                </div>
+📊 Dashboard MovieTrack
 
-                <div className="movie-card">
+</h1>
 
-                    <div className="movie-content">
+<div
+style={{
 
-                        <h2>
-                            📝 Reviews
-                        </h2>
+display:"grid",
 
-                        <h1>
-                            {stats.totalReviews}
-                        </h1>
+gridTemplateColumns:
+"repeat(auto-fit,minmax(300px,1fr))",
 
-                    </div>
+gap:"25px",
 
-                </div>
+marginTop:"30px"
 
-            </div>
+}}
+>
 
-            <br />
+<div
+style={{
+background:"#1f1f1f",
+padding:"25px",
+borderRadius:"15px"
+}}
+>
 
-            <div className="movie-card">
+<h2>
 
-                <div className="movie-content">
+🎬 Total películas
 
-                    <h2>
-                        ⭐ Top películas
-                    </h2>
+</h2>
 
-                    {
+<h1>
 
-                        stats.topMovies.map(
+{data.totalMovies}
 
-                            movie => (
+</h1>
 
-                                <p key={movie._id}>
+</div>
 
-                                    {movie.nombre}
-                                    — ⭐
-                                    {movie.calificacion}
+<div
+style={{
+background:"#1f1f1f",
+padding:"25px",
+borderRadius:"15px"
+}}
+>
 
-                                </p>
-                            )
-                        )
-                    }
+<h2>
 
-                </div>
+🎭 Películas por género
 
-            </div>
+</h2>
 
-            <br />
+{
 
-            <div className="movie-card">
+data.moviesStats?.map(
+m=>(
 
-                <div className="movie-content">
+<div
+key={
+m.genero
+}
+>
 
-                    <h2>
-                        🎭 Películas por género
-                    </h2>
+{m.genero}
 
-                    {
+<br/>
 
-                        stats.moviesPerGenre.map(
+Cantidad:
+<b>
 
-                            item => (
+{m.totalPeliculas}
 
-                                <p key={item._id}>
+</b>
 
-                                    {item._id}
-                                    :
-                                    {item.total}
+<br/>
 
-                                </p>
-                            )
-                        )
-                    }
+Promedio:
+⭐
 
-                </div>
+{m.promedio}
 
-            </div>
+<hr/>
 
-        </div>
-    );
+</div>
+
+)
+
+)
+
+}
+
+</div>
+
+<div
+style={{
+background:"#1f1f1f",
+padding:"25px",
+borderRadius:"15px"
+}}
+>
+
+<h2>
+
+⭐ Total reseñas
+
+</h2>
+
+<h1>
+
+{
+
+data.reviewsStats
+?.reduce(
+(
+acc,
+r
+)=>
+
+acc+
+r.totalReviews,
+
+0
+
+)
+
+||
+
+0
+
+}
+
+</h1>
+
+</div>
+
+</div>
+
+</div>
+
+);
+
 }
 
 export default Dashboard;

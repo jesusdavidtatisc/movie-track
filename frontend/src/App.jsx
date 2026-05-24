@@ -19,9 +19,9 @@ import Login from "./pages/Login";
 
 import Register from "./pages/Register";
 
-import Dashboard from "./pages/Dashboard";
-
 import MovieDetails from "./pages/MovieDetails";
+
+import Dashboard from "./pages/Dashboard";
 
 function App() {
 
@@ -104,6 +104,8 @@ function App() {
 
             />
 
+            {/* SOLO CAMBIÓ ESTA RUTA */}
+
             <Route
 
                 path="/dashboard"
@@ -112,7 +114,9 @@ function App() {
 
                     user ?
 
-                    <Dashboard />
+                    <Dashboard
+                        user={user}
+                    />
 
                     :
 

@@ -3,27 +3,16 @@ import { Link } from "react-router-dom";
 function Navbar({
 
     search,
-
     setSearch,
-
     searchMovies,
-
     genero,
-
     setGenero,
-
     anio,
-
     setAnio,
-
     rating,
-
     setRating,
-
     filterMovies,
-
     logout,
-
     movies
 
 }) {
@@ -31,12 +20,9 @@ function Navbar({
     const years = [
 
         ...new Set(
-
             movies.map(
-                movie =>
-                movie.anio
+                movie => movie.anio
             )
-
         )
 
     ].sort((a, b) => a - b);
@@ -67,30 +53,60 @@ function Navbar({
 
     return (
 
-        <nav
-            className="navbar"
-        >
+        <nav className="navbar">
 
-            <Link
-                to="/"
+            <div
                 style={{
-                    textDecoration:"none"
+                    display:"flex",
+                    alignItems:"center",
+                    gap:"15px"
                 }}
             >
 
-                <h1
-                    className="logo"
+                <Link
+                    to="/"
+                    style={{
+                        textDecoration:"none",
+                        color:"inherit"
+                    }}
                 >
 
-                    🎬 MovieTrack
+                    <h1 className="logo">
 
-                </h1>
+                        🎬 MovieTrack
 
-            </Link>
+                    </h1>
 
-            <div
-                className="nav-center"
-            >
+                </Link>
+
+                <Link
+                    to="/dashboard"
+                    style={{
+                        textDecoration:"none"
+                    }}
+                >
+
+                    <button
+                        style={{
+                            padding:"10px 18px",
+                            border:"none",
+                            borderRadius:"8px",
+                            cursor:"pointer",
+                            background:"#e50914",
+                            color:"white",
+                            fontWeight:"bold"
+                        }}
+                    >
+
+                        Dashboard
+
+                    </button>
+
+                </Link>
+
+            </div>
+
+            <div className="nav-center">
 
                 <input
 
@@ -120,9 +136,7 @@ function Navbar({
 
             </div>
 
-            <div
-                className="filters"
-            >
+            <div className="filters">
 
                 <select
 
@@ -147,16 +161,18 @@ function Navbar({
                         genres.map(
                             genre => (
 
-                            <option
-                                key={genre}
-                                value={genre}
-                            >
+                                <option
+                                    key={genre}
+                                    value={genre}
+                                >
 
-                                {genre}
+                                    {genre}
 
-                            </option>
+                                </option>
 
-                        ))
+                            )
+                        )
+
                     }
 
                 </select>
@@ -181,18 +197,21 @@ function Navbar({
 
                     {
 
-                        years.map(year => (
+                        years.map(
+                            year => (
 
-                            <option
-                                key={year}
-                                value={year}
-                            >
+                                <option
+                                    key={year}
+                                    value={year}
+                                >
 
-                                {year}
+                                    {year}
 
-                            </option>
+                                </option>
 
-                        ))
+                            )
+                        )
+
                     }
 
                 </select>
@@ -217,18 +236,21 @@ function Navbar({
 
                     {
 
-                        ratings.map(rate => (
+                        ratings.map(
+                            rate => (
 
-                            <option
-                                key={rate}
-                                value={rate}
-                            >
+                                <option
+                                    key={rate}
+                                    value={rate}
+                                >
 
-                                {rate}
+                                    {rate}
 
-                            </option>
+                                </option>
 
-                        ))
+                            )
+                        )
+
                     }
 
                 </select>
@@ -253,6 +275,7 @@ function Navbar({
             </button>
 
         </nav>
+
     );
 }
 
