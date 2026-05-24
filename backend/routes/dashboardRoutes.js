@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 const Movie = require("../models/Movie");
+
 const Review = require("../models/Review");
 
 router.get("/stats", async (req, res) => {
@@ -46,8 +47,11 @@ totalPeliculas:-1
 {
 $project:{
 _id:0,
+
 genero:"$_id",
+
 totalPeliculas:1,
+
 promedio:{
 $round:[
 "$promedio",
@@ -60,7 +64,6 @@ $round:[
 ]);
 
 const reviewsStats =
-
 await Review.aggregate([
 
 {
@@ -82,6 +85,7 @@ preserveNullAndEmptyArrays:true
 {
 $group:{
 _id:"$user.nombre",
+
 totalReviews:{
 $sum:1
 }
@@ -97,7 +101,9 @@ totalReviews:-1
 {
 $project:{
 _id:0,
+
 usuario:"$_id",
+
 totalReviews:1
 }
 }
