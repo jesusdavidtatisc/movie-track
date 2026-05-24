@@ -2,7 +2,35 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-function Dashboard() {
+import {
+ResponsiveContainer,
+BarChart,
+Bar,
+XAxis,
+YAxis,
+Tooltip,
+PieChart,
+Pie,
+Cell,
+Legend
+} from "recharts";
+
+const COLORS=[
+
+"#FF4D6D",
+"#3B82F6",
+"#10B981",
+"#F59E0B",
+"#8B5CF6",
+"#EC4899",
+"#06B6D4",
+"#22C55E",
+"#EAB308",
+"#F97316"
+
+];
+
+function Dashboard(){
 
 const [data,setData]=useState(null);
 
@@ -25,13 +53,11 @@ const load=async()=>{
 try{
 
 const dashboard=
-
 await axios.get(
 "http://localhost:5000/api/dashboard/stats"
 );
 
 const peliculas=
-
 await axios.get(
 "http://localhost:5000/api/movies"
 );
@@ -44,9 +70,7 @@ setMovies(
 peliculas.data
 );
 
-}
-
-catch(error){
+}catch(error){
 
 console.log(error);
 
@@ -106,6 +130,64 @@ result
 
 };
 
+const CustomTooltip=({
+
+active,
+payload
+
+})=>{
+
+if(
+active &&
+payload &&
+payload.length
+){
+
+return(
+
+<div
+style={{
+
+background:"#181818",
+
+padding:"12px",
+
+borderRadius:"12px",
+
+color:"white"
+
+}}
+>
+
+<b>
+
+{
+payload[0]
+.payload
+.genero
+}
+
+</b>
+
+<br/>
+
+Películas:
+
+{
+payload[0]
+.value
+}
+
+</div>
+
+);
+
+}
+
+return null;
+
+};
+
 if(!data){
 
 return(
@@ -113,7 +195,7 @@ return(
 <h1
 style={{
 textAlign:"center",
-marginTop:"50px"
+marginTop:"100px"
 }}
 >
 
@@ -125,7 +207,7 @@ Cargando Dashboard...
 
 }
 
-const totalReviews =
+const totalReviews=
 
 data.reviewsStats
 ?.reduce(
@@ -145,7 +227,7 @@ return(
 
 <div
 style={{
-padding:"30px"
+padding:"35px"
 }}
 >
 
@@ -165,8 +247,6 @@ padding:"30px"
 
 </h1>
 
-{/* FILTROS */}
-
 <div
 style={{
 
@@ -174,25 +254,20 @@ display:"flex",
 
 gap:"10px",
 
-flexWrap:"wrap",
+marginBottom:"30px",
 
-marginBottom:"30px"
+flexWrap:"wrap"
 
 }}
 >
 
 <select
-
 value={genero}
-
 onChange={(e)=>
-
 setGenero(
 e.target.value
 )
-
 }
-
 >
 
 <option value="">
@@ -206,12 +281,10 @@ Todos los géneros
 [
 
 ...new Set(
-
 movies.map(
 m=>
 m.genero
 )
-
 )
 
 ]
@@ -222,7 +295,6 @@ g=>
 
 <option
 key={g}
-value={g}
 >
 
 {g}
@@ -236,17 +308,12 @@ value={g}
 </select>
 
 <select
-
 value={anio}
-
 onChange={(e)=>
-
 setAnio(
 e.target.value
 )
-
 }
-
 >
 
 <option value="">
@@ -260,17 +327,13 @@ Todos los años
 [
 
 ...new Set(
-
 movies.map(
 m=>
 m.anio
 )
-
 )
 
 ]
-
-.sort((a,b)=>a-b)
 
 .map(
 
@@ -278,7 +341,6 @@ a=>
 
 <option
 key={a}
-value={a}
 >
 
 {a}
@@ -292,17 +354,12 @@ value={a}
 </select>
 
 <select
-
 value={rating}
-
 onChange={(e)=>
-
 setRating(
 e.target.value
 )
-
 }
-
 >
 
 <option value="">
@@ -321,7 +378,6 @@ r=>
 
 <option
 key={r}
-value={r}
 >
 
 ⭐ {r}
@@ -344,8 +400,6 @@ Filtrar
 
 </div>
 
-{/* TARJETAS */}
-
 <div
 
 style={{
@@ -355,7 +409,7 @@ display:"grid",
 gridTemplateColumns:
 "repeat(3,1fr)",
 
-gap:"20px",
+gap:"25px",
 
 marginBottom:"40px"
 
@@ -365,11 +419,7 @@ marginBottom:"40px"
 
 <Card>
 
-<h2>
-
 🎬 Total películas
-
-</h2>
 
 <h1>
 
@@ -381,29 +431,23 @@ marginBottom:"40px"
 
 <Card>
 
-<h2>
-
 🎭 Películas por género
 
-</h2>
-
 <div
-
 style={{
 
-maxHeight:"230px",
+maxHeight:"220px",
 
 overflowY:"auto",
 
-paddingRight:"20px"
+paddingRight:"18px"
 
 }}
-
 >
 
 {
 
-data.moviesStats?.map(
+data.moviesStats.map(
 
 m=>
 
@@ -418,10 +462,7 @@ display:"flex",
 justifyContent:
 "space-between",
 
-padding:"10px",
-
-borderBottom:
-"1px solid #333"
+padding:"10px"
 
 }}
 
@@ -451,11 +492,7 @@ borderBottom:
 
 <Card>
 
-<h2>
-
 ⭐ Total reseñas
-
-</h2>
 
 <h1>
 
@@ -467,7 +504,197 @@ borderBottom:
 
 </div>
 
-{/* RESULTADOS FILTRO */}
+<div
+
+style={{
+
+display:"grid",
+
+gridTemplateColumns:
+"1fr 1fr",
+
+gap:"25px",
+
+marginBottom:"40px"
+
+}}
+
+>
+
+<Card>
+
+📊 Películas por género
+
+<ResponsiveContainer
+width="100%"
+height={420}
+>
+
+<BarChart
+
+data={data.moviesStats}
+
+barCategoryGap="20%"
+
+>
+
+<XAxis
+dataKey="genero"
+stroke="white"
+/>
+
+<YAxis
+stroke="white"
+/>
+
+<Tooltip
+content={<CustomTooltip/>}
+/>
+
+<Legend/>
+
+<Bar
+
+dataKey="totalPeliculas"
+
+radius={[12,12,0,0]}
+
+animationBegin={200}
+
+animationDuration={1800}
+
+animationEasing="ease-out"
+
+>
+
+{
+
+data.moviesStats.map(
+(_,i)=>(
+
+<Cell
+
+key={i}
+
+fill={
+COLORS[
+i%
+COLORS.length
+]
+}
+
+/>
+
+)
+
+)
+
+}
+
+</Bar>
+
+</BarChart>
+
+</ResponsiveContainer>
+
+</Card>
+
+<Card>
+
+🥧 Distribución
+
+<ResponsiveContainer
+width="100%"
+height={420}
+>
+
+<PieChart>
+
+<Pie
+
+data={data.moviesStats}
+
+dataKey="totalPeliculas"
+
+nameKey="genero"
+
+innerRadius={60}
+
+outerRadius={150}
+
+paddingAngle={3}
+
+isAnimationActive
+
+animationBegin={300}
+
+animationDuration={2200}
+
+animationEasing="ease-out"
+
+label={({name,percent})=>
+
+`${name}
+${(
+percent*
+100
+).toFixed(0)}%`
+
+}
+
+>
+
+{
+
+data.moviesStats.map(
+(_,i)=>(
+
+<Cell
+
+key={i}
+
+fill={
+COLORS[
+i%
+COLORS.length
+]
+}
+
+/>
+
+)
+
+)
+
+}
+
+</Pie>
+
+<Tooltip/>
+
+<Legend
+formatter={(value)=>
+
+<span
+style={{
+color:"white"
+}}
+>
+
+{value}
+
+</span>
+
+}
+/>
+
+</PieChart>
+
+</ResponsiveContainer>
+
+</Card>
+
+</div>
 
 {
 
@@ -482,18 +709,7 @@ filteredMovies.length>0 && (
 </h2>
 
 <div
-
-style={{
-
-display:"grid",
-
-gridTemplateColumns:
-"repeat(auto-fill,minmax(330px,1fr))",
-
-gap:"25px"
-
-}}
-
+className="movies-grid"
 >
 
 {
@@ -514,9 +730,9 @@ className="movie-card"
 
 src={movie.imagen}
 
-alt={movie.nombre}
-
 className="movie-image"
+
+alt=""
 
 style={{
 
@@ -524,7 +740,7 @@ height:"450px"
 
 }}
 
-/>
+></img>
 
 <div
 className="movie-content"
@@ -585,16 +801,24 @@ children
 return(
 
 <div
-className="movie-card"
->
 
-<div
-className="movie-content"
+style={{
+
+background:"#181818",
+
+padding:"25px",
+
+borderRadius:"20px",
+
+boxShadow:
+
+"0 0 20px rgba(255,255,255,.03)"
+
+}}
+
 >
 
 {children}
-
-</div>
 
 </div>
 
