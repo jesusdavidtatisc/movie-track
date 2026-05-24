@@ -8,6 +8,20 @@ import Navbar from "../components/Navbar";
 
 function MovieDetails() {
 
+        const token =
+        localStorage.getItem(
+            "token"
+    );
+
+        const user =
+        JSON.parse(
+
+        localStorage.getItem(
+            "user"
+    )
+
+);
+
     const { id } =
     useParams();
 
@@ -19,6 +33,9 @@ function MovieDetails() {
 
     const [comentario, setComentario] =
     useState("");
+
+    const [rating, setRating] =
+    useState(1);
 
     useEffect(() => {
 
@@ -73,17 +90,30 @@ function MovieDetails() {
 
             await axios.post(
 
-                "http://localhost:5000/api/reviews",
+    "http://localhost:5000/api/reviews",
 
-                {
+    {
 
-                    movieId:id,
+        movieId:id,
 
-                    comentario
+        comentario,
 
-                }
+        rating:Number(rating)
 
-            );
+    },
+
+    {
+
+        headers:{
+
+            Authorization:
+            `Bearer ${localStorage.getItem("token")}`
+
+        }
+
+    }
+
+);
 
             setComentario("");
 
@@ -91,9 +121,61 @@ function MovieDetails() {
 
         } catch (error) {
 
-            console.log(error);
+             console.log(error);
+
+            alert(
+
+                error.response?.data?.message
+
+                ||
+
+                "Error publicando reseña"
+            );
         }
     };
+
+    const deleteReview =
+        async (id) => {
+
+            try {
+
+                await axios.delete(
+
+                    `http://localhost:5000/api/reviews/${id}`,
+
+                    {
+
+                        headers:{
+
+                            Authorization:
+                            `Bearer ${localStorage.getItem("token")}`
+
+                        }
+
+                    }
+
+                );
+
+                alert(
+                    "Reseña eliminada"
+                );
+
+                getReviews();
+
+            } catch (error) {
+
+                console.log(error);
+
+                alert(
+
+                    error.response?.data?.message
+
+                    ||
+
+                    "No se pudo eliminar la reseña"
+                );
+            }
+        };
 
     if (!movie) {
 
@@ -240,6 +322,51 @@ function MovieDetails() {
                         }}
 
                     />
+                    <select
+
+                        value={rating}
+
+                        onChange={(e) =>
+                            setRating(
+                                e.target.value
+                            )
+                        }
+
+                        style={{
+
+                            padding:"10px",
+
+                            borderRadius:"8px",
+
+                            marginTop:"10px",
+
+                            marginBottom:"10px"
+
+                        }}
+
+                    >
+
+                        <option value="1">
+                            ⭐ 1
+                        </option>
+
+                        <option value="2">
+                            ⭐⭐ 2
+                        </option>
+
+                        <option value="3">
+                            ⭐⭐⭐ 3
+                        </option>
+
+                        <option value="4">
+                            ⭐⭐⭐⭐ 4
+                        </option>
+
+                        <option value="5">
+                            ⭐⭐⭐⭐⭐ 5
+                        </option>
+
+                    </select>
 
                     <button
 
@@ -305,23 +432,79 @@ function MovieDetails() {
 
                         >
 
-                            <h4>
+                           <h4>
 
-                                {
+                                 {
 
-                                    review.userId?.nombre
+                                     review.userId?.username
+
+                                    ||
+
+                                    review.userId?.email
 
                                     ||
 
                                     "Usuario"
 
-                                }
+                                    }
 
                             </h4>
 
                             <p>
                                 {review.comentario}
                             </p>
+                            
+                            <p>
+
+                                {"⭐".repeat(review.rating)}
+
+                            </p>
+                            
+
+                            {
+
+                            review.userId?._id ===
+
+                            JSON.parse(
+                                localStorage.getItem("user")
+                            )?._id
+
+                            && (
+
+                                <button
+
+                                    onClick={() =>
+                                        deleteReview(
+                                            review._id
+                                        )
+                                    }
+
+                                    style={{
+
+                                        marginTop:"10px",
+
+                                        background:"crimson",
+
+                                        color:"white",
+
+                                        border:"none",
+
+                                        padding:"8px 12px",
+
+                                        borderRadius:"8px",
+
+                                        cursor:"pointer"
+
+                                    }}
+
+                                >
+
+                                    Eliminar
+
+                                </button>
+
+                            )
+                        }
 
                         </div>
 
@@ -333,5 +516,7 @@ function MovieDetails() {
         </div>
     );
 }
+
+
 
 export default MovieDetails;

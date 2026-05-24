@@ -342,7 +342,17 @@ function Home() {
 
                     style={{
 
-                        padding:"12px 20px",
+                        position:"fixed",
+
+                        bottom:"30px",
+
+                        right:"30px",
+
+                        width:"70px",
+
+                        height:"70px",
+
+                        borderRadius:"50%",
 
                         background:"#e50914",
 
@@ -350,11 +360,15 @@ function Home() {
 
                         border:"none",
 
-                        borderRadius:"8px",
+                        fontSize:"35px",
+
+                        fontWeight:"bold",
 
                         cursor:"pointer",
 
-                        fontWeight:"bold"
+                        boxShadow:"0 0 15px rgba(0,0,0,0.4)",
+
+                        zIndex:1000
 
                     }}
 
@@ -366,11 +380,11 @@ function Home() {
 
                         ?
 
-                        "Cancelar"
+                        "×"
 
                         :
 
-                        "Agregar Película"
+                        "+"
 
                     }
 
@@ -763,6 +777,23 @@ function Home() {
 
                             <p>
                                 ⭐ {movie.calificacion}/10
+                            </p>
+                           <p>
+
+                                👥 Audiencia: {
+
+                                    movie.promedioReviews > 0
+
+                                    ?
+
+                                    `${movie.promedioReviews}/5 ⭐`
+
+                                    :
+
+                                    "Sin reseñas"
+
+                                }
+
                             </p>
 
                             <Link

@@ -16,10 +16,73 @@ router.get(
 
     async (req, res) => {
 
-        const movies =
-        await Movie.find();
+        try {
 
-        res.json(movies);
+            const Review =
+            require("../models/Review");
+
+            const movies =
+            await Movie.find();
+
+            const moviesWithRatings =
+
+            await Promise.all(
+
+                movies.map(async (movie) => {
+
+                    const reviews =
+
+                    await Review.find({
+
+                        movieId:movie._id
+
+                    });
+
+                    let promedio = 0;
+
+                    if (reviews.length > 0) {
+
+                        const total =
+
+                        reviews.reduce(
+
+                            (acc, review) =>
+
+                                acc + review.rating,
+
+                            0
+
+                        );
+
+                        promedio =
+
+                        (total / reviews.length)
+                        .toFixed(1);
+                    }
+
+                    return {
+
+                        ...movie._doc,
+
+                        promedioReviews:promedio
+
+                    };
+                })
+
+            );
+
+            res.json(
+                moviesWithRatings
+            );
+
+        } catch (error) {
+
+            res.status(500).json({
+
+                message:error.message
+
+            });
+        }
     }
 );
 
@@ -30,19 +93,57 @@ router.get(
     async (req, res) => {
 
         const movies =
-        await Movie.find({
+await Movie.find();
 
-            nombre: {
+const Review =
+require("../models/Review");
 
-                $regex:req.query.q,
+const moviesWithRatings =
 
-                $options:"i"
+await Promise.all(
 
-            }
+    movies.map(async (movie) => {
+
+        const reviews =
+
+        await Review.find({
+
+            movieId:movie._id
 
         });
 
-        res.json(movies);
+        const averageRating =
+
+            reviews.length > 0
+
+            ?
+
+            reviews.reduce(
+
+                (acc, review) =>
+
+                    acc + review.rating,
+
+                0
+
+            ) / reviews.length
+
+            :
+
+            0;
+
+        return {
+
+            ...movie._doc,
+
+            averageRating:
+            averageRating.toFixed(1)
+
+        };
+    })
+);
+
+res.json(moviesWithRatings);
     }
 );
 
